@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>082D489A-926F-4544-A42F-C09D4D971E66</string>
+	<key>IDESourceControlProjectName</key>
+	<string>RestKit</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6CF2D371-4549-46B4-858D-CB20400806A8</key>
+		<string>https://github.com/vaultinnovation/freeminders-ios.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Freeminders/RestKit-0.20.3/RestKit.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6CF2D371-4549-46B4-858D-CB20400806A8</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/vaultinnovation/freeminders-ios.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6CF2D371-4549-46B4-858D-CB20400806A8</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6CF2D371-4549-46B4-858D-CB20400806A8</string>
+			<key>IDESourceControlWCCName</key>
+			<string>freeminders-ios</string>
+		</dict>
+	</array>
+</dict>
+</plist>

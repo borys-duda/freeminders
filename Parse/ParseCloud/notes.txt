@@ -1,0 +1,39 @@
+https://www.parse.com/docs/cloud_code_guide
+
+https://www.parse.com/questions/cloud-code-need-tool-javascript-editor
+See post from Florent
+
+Sublime Text 2 provides a free and pretty good dev environment. http://www.sublimetext.com/2
+
+Once you got it, install the powerful package manager:
+
+http://wbond.net/sublime_packages/package_control/installation
+
+That will help you install the code intel tools.
+
+Then you'll want to install TernJS that provide an autocompletion server: http://emmet.io/blog/sublime-tern/
+
+Create a sublime text project at the root of you cloud code folder, alongside ./cloud and ./config Edit you PROJECT_NAME.sublime-project with your favorite editor:
+
+{
+    "folders":
+    [
+        {
+
+            "path": "cloud"
+        }
+    ],
+    "ternjs": {
+        "include": ["*.js"],
+        "loadEagerly": [
+            "PATH_TO_PARSEJS/Parse.js"
+        ],
+            "plugins": {
+            }
+        }
+}
+Download the Parse.js SDK from Parse and put it at PATH_TO_PARSEJS/Parse.js
+
+Sublime will now be able to autocomplete with Parse SDK as well as all *.js file in the scope of the project.
+
+Happy Coding!

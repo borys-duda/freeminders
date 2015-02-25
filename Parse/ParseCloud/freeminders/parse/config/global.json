@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "_default": {
+            "link": "freeminders-rlh"
+        }, 
+        "freeminders-rlh": {
+            "applicationId": "nCBuF10h5nFXOVfhJIOZpqWIOnB3z9eeymCuNiCM", 
+            "masterKey": "lJpyBtgMThRYWA2wyyvk9XQdysgCzcFbhA4h3tfV"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.19"
+    }
+}

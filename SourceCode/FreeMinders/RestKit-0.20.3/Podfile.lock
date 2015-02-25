@@ -1,0 +1,19 @@
+PODS:
+  - Expecta (0.2.1)
+  - OCHamcrest (2.1.0)
+  - OCMock (2.1.1)
+  - Specta (0.1.9)
+
+DEPENDENCIES:
+  - Expecta (= 0.2.1)
+  - OCHamcrest (= 2.1.0)
+  - OCMock (= 2.1.1)
+  - Specta (= 0.1.9)
+
+SPEC CHECKSUMS:
+  Expecta: 0f0a97dfcbf5173a4c58cff75c51ca4c709c7fc1
+  OCHamcrest: 1eed4e9724893f3dcf5165b9bf57f60d9d693e7d
+  OCMock: 363db8429164eaa219ea96a51f06e830ef3e7393
+  Specta: fea876566339a5e7cd9212e7c455c65250bb7591
+
+COCOAPODS: 0.33.1

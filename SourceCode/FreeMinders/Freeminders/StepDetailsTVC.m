@@ -15,6 +15,7 @@
 #import "AddEditTaskTVC.h"
 #import "Utils.h"
 #import <AVFoundation/AVFoundation.h>
+#import "DataManager.h"
 
 @interface StepDetailsTVC ()
 
@@ -169,7 +170,8 @@ NSString *SEGU_EDIT_TASKS=@"edittaskfromstepdetails";
     [self savingInNSUserDeFaults];
      NSMutableArray * arry =[NSMutableArray arrayWithArray:[UserData instance].task.reminderSteps];
     [arry addObject:[UserData instance].task];
-    [PFObject saveAllInBackground:arry];
+//    [PFObject saveAllInBackground:arry];
+    [[DataManager sharedInstance] saveDatas:arry];
     [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)editButtonAction

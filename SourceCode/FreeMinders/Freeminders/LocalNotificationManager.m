@@ -15,6 +15,7 @@
 #import "YahooQuery.h"
 #import "WeatherForcast.h"
 #import "BackgroundFetchManager.h"
+#import "DataManager.h"
 
 @implementation LocalNotificationManager
 
@@ -128,7 +129,7 @@ NSString *DATETIME_TRIGGER = @"datetime", *WEATHER_TRIGGER = @"weather", *LOCATI
                         }
                     }
                 }
-                if (doSave) [task saveInBackground];
+                if (doSave) [[DataManager sharedInstance] saveObject:task];
             } else if (task.triggerType == weatherTrigger && task.weatherTriggers.count
                        && [task.weatherTriggers objectAtIndex:0] && ![[task.weatherTriggers objectAtIndex:0] isEqual:[NSNull null]]
                        && [[task.weatherTriggers objectAtIndex:0] isDataAvailable]) {
@@ -196,7 +197,7 @@ NSString *DATETIME_TRIGGER = @"datetime", *WEATHER_TRIGGER = @"weather", *LOCATI
                     [notification setFireDate:[NSDate date]];
                     [self setNotification:notification];
                     task.lastNotificationDate = [NSDate date];
-                    [task saveInBackground];
+                    [[DataManager sharedInstance] saveObject:task];
                 }
             }
             
@@ -323,7 +324,7 @@ NSString *DATETIME_TRIGGER = @"datetime", *WEATHER_TRIGGER = @"weather", *LOCATI
                             if (! task.nextNotificationDate
                                 || [Utils isDate:date beforeDate:task.nextNotificationDate]) {
                                 task.nextNotificationDate = date;
-                                [task saveInBackground];
+                                [[DataManager sharedInstance] saveObject:task];
                             }
                         }
                     }
@@ -346,7 +347,7 @@ NSString *DATETIME_TRIGGER = @"datetime", *WEATHER_TRIGGER = @"weather", *LOCATI
                             if (! task.nextNotificationDate
                                 || [Utils isDate:date beforeDate:task.nextNotificationDate]) {
                                 task.nextNotificationDate = date;
-                                [task saveInBackground];
+                                [[DataManager sharedInstance] saveObject:task];
                             }
                         }
                     }
@@ -381,7 +382,7 @@ NSString *DATETIME_TRIGGER = @"datetime", *WEATHER_TRIGGER = @"weather", *LOCATI
                 if (! task.nextNotificationDate
                     || [Utils isDate:date beforeDate:task.nextNotificationDate]) {
                     task.nextNotificationDate = date;
-                    [task saveInBackground];
+                    [[DataManager sharedInstance] saveObject:task];
                 }
             }
         }

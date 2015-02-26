@@ -10,6 +10,7 @@
 #import "UserContact.h"
 #import "UserData.h"
 #import "EmailVC.h"
+#import "DataManager.h"
 
 @interface NotificationTVC ()
 
@@ -98,15 +99,20 @@ int sectionsCount;
 }
 -(void)performLoadUserContacts
 {
-    PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
-    [query whereKey:@"owner" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadUserContactsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"UserConatcts LOADED");
         if ([objects.firstObject isKindOfClass:[UserContact class]])
             [UserData instance].userContacts = [objects mutableCopy];
     }];
-         NSLog(@"number of objects are %lu",(unsigned long)[UserData instance].userContacts.count);
+//    PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
+//    [query whereKey:@"owner" equalTo:[PFUser currentUser]];
+//    [query setLimit:1000];
+//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+//        NSLog(@"UserConatcts LOADED");
+//        if ([objects.firstObject isKindOfClass:[UserContact class]])
+//            [UserData instance].userContacts = [objects mutableCopy];
+//    }];
+    NSLog(@"number of objects are %lu",(unsigned long)[UserData instance].userContacts.count);
 }
 - (IBAction)cancelButtonPressed
 {
@@ -144,7 +150,8 @@ int sectionsCount;
     }
     if(tasksToReset.count)
     {
-        [PFObject saveAllInBackground:tasksToReset];
+//        [PFObject saveAllInBackground:tasksToReset];
+        [[DataManager sharedInstance] saveDatas:tasksToReset];
     }
     
     [self.navigationController popViewControllerAnimated:YES];

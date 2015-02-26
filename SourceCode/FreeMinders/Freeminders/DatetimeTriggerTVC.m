@@ -9,6 +9,7 @@
 #import "DatetimeTriggerTVC.h"
 #import "DateTimeTrigger.h"
 #import "Utils.h"
+#import "DataManager.h"
 
 #define NOTIFY_ME_BEFORE_NUMBER_LIMIT 121
 #define TIME_AFTER_NUMBER_LIMIT 120
@@ -98,7 +99,7 @@ NSInteger const ROW_EVERYMONTH_OPTION = 7;
         trigger.date = tomorrowAlertTime;
         
         [[UserData instance].task.dateTimeTriggers addObject:trigger];
-        [[UserData instance].task saveInBackground];
+        [[DataManager sharedInstance] saveObject:[UserData instance].task];
     }
     
     [self setupPickerViews];

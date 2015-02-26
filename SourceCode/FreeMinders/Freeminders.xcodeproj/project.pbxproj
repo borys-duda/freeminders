@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		182785A519667EE60085E4D0 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 182785A319667EE60085E4D0 /* FacebookSDK.framework */; };
 		24001905193CD9C400D0D784 /* slide_left_undo_icon_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 24001903193CD9C400D0D784 /* slide_left_undo_icon_active.png */; };
 		24001906193CD9C400D0D784 /* slide_left_undo_icon_active@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 24001904193CD9C400D0D784 /* slide_left_undo_icon_active@2x.png */; };
 		2400190C193CDBC900D0D784 /* slide_left_undo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2400190A193CDBC900D0D784 /* slide_left_undo_icon.png */; };
@@ -150,10 +149,6 @@
 		2448104918EF073B005D9250 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2448104818EF073B005D9250 /* AppDelegate.m */; };
 		2448104C18EF073B005D9250 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2448104A18EF073B005D9250 /* Main.storyboard */; };
 		2448105118EF073B005D9250 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2448105018EF073B005D9250 /* Images.xcassets */; };
-		2448105918EF073C005D9250 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2448103818EF073B005D9250 /* Foundation.framework */; };
-		2448105A18EF073C005D9250 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2448103C18EF073B005D9250 /* UIKit.framework */; };
-		2448106218EF073C005D9250 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2448106018EF073C005D9250 /* InfoPlist.strings */; };
-		2448106418EF073C005D9250 /* FreemindersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2448106318EF073C005D9250 /* FreemindersTests.m */; };
 		2448108418EF5D61005D9250 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2448108318EF5D61005D9250 /* AudioToolbox.framework */; };
 		2448108618EF5D68005D9250 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2448108518EF5D68005D9250 /* CFNetwork.framework */; };
 		2448108818EF5D75005D9250 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2448108718EF5D75005D9250 /* SystemConfiguration.framework */; };
@@ -399,12 +394,18 @@
 		9FFE71581A00C95300136874 /* reminder_location_icon_active@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE71531A00C95300136874 /* reminder_location_icon_active@2x.png */; };
 		9FFE71591A00C95300136874 /* reminder_weather_icon_active_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE71541A00C95300136874 /* reminder_weather_icon_active_blue.png */; };
 		9FFE715A1A00C95300136874 /* reminder_weather_icon_active_blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FFE71551A00C95300136874 /* reminder_weather_icon_active_blue@2x.png */; };
+		A9C6B1FA1A9C573700D68E05 /* DataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C6B1F91A9C573700D68E05 /* DataManager.m */; };
+		A9C6B2001A9C673C00D68E05 /* UserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C6B1FF1A9C673C00D68E05 /* UserManager.m */; };
+		A9FEF3261A9B6C0C006DDC4C /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FEF3241A9B6C0C006DDC4C /* FacebookSDK.framework */; };
+		A9FEF3271A9B6C0C006DDC4C /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FEF3251A9B6C0C006DDC4C /* Parse.framework */; };
+		A9FEF3291A9B6C1E006DDC4C /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FEF3281A9B6C1E006DDC4C /* libsqlite3.dylib */; };
+		A9FEF32B1A9B6C26006DDC4C /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FEF32A1A9B6C26006DDC4C /* Social.framework */; };
+		A9FEF32D1A9B6C4A006DDC4C /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9FEF32C1A9B6C4A006DDC4C /* ParseFacebookUtils.framework */; };
 		B90EBB4419E9828E00DF68C3 /* NotificationTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B90EBB4119E9828E00DF68C3 /* NotificationTVC.m */; };
 		B90EBB4519E9828E00DF68C3 /* LocationResetVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B90EBB4319E9828E00DF68C3 /* LocationResetVC.m */; };
 		B92D27BA1A790ED400A8D3DA /* InterpreterAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = B92D27B51A790ED400A8D3DA /* InterpreterAdapter.m */; };
 		B92D27BB1A790ED400A8D3DA /* InterpreterAdapterArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B92D27B71A790ED400A8D3DA /* InterpreterAdapterArgs.m */; };
 		B92D27BC1A790ED400A8D3DA /* TimeSpan.m in Sources */ = {isa = PBXBuildFile; fileRef = B92D27B91A790ED400A8D3DA /* TimeSpan.m */; };
-		B92D27C11A7929F500A8D3DA /* InterpreterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B92D27C01A7929F500A8D3DA /* InterpreterTests.m */; };
 		B92D4F7519ED7C980005E9E9 /* task_line_email_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B92D4F7319ED7C980005E9E9 /* task_line_email_icon.png */; };
 		B92D4F7619ED7C980005E9E9 /* task_line_email_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B92D4F7419ED7C980005E9E9 /* task_line_email_icon@2x.png */; };
 		B92ED07F19C87A4A003380BE /* task_line_important_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B92ED07B19C87A49003380BE /* task_line_important_icon.png */; };
@@ -412,8 +413,6 @@
 		B92ED08119C87A4A003380BE /* task_line_snooze_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B92ED07D19C87A49003380BE /* task_line_snooze_icon.png */; };
 		B92ED08219C87A4A003380BE /* task_line_snooze_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B92ED07E19C87A49003380BE /* task_line_snooze_icon@2x.png */; };
 		B938CA0C1A0D11FD0082A272 /* UserPurchase.m in Sources */ = {isa = PBXBuildFile; fileRef = B938CA0B1A0D11FD0082A272 /* UserPurchase.m */; };
-		B93FCAFF1A7A121A003B4E53 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 182785A71966812F0085E4D0 /* Parse.framework */; };
-		B93FCB001A7A14DD003B4E53 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 182785A71966812F0085E4D0 /* Parse.framework */; };
 		B962C1BF1A14DAF3003775C1 /* task-line-depend-active-icon_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = B962C1BD1A14DAF3003775C1 /* task-line-depend-active-icon_blue.png */; };
 		B962C1C01A14DAF3003775C1 /* task-line-depend-active-icon_blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B962C1BE1A14DAF3003775C1 /* task-line-depend-active-icon_blue@2x.png */; };
 		B963F89219D6F927005B45A1 /* UserLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B963F89119D6F927005B45A1 /* UserLocation.m */; };
@@ -479,18 +478,9 @@
 			remoteGlobalIDString = 25160D1514564E810060A5C5;
 			remoteInfo = RestKit;
 		};
-		2448105B18EF073C005D9250 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2448102D18EF073B005D9250 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2448103418EF073B005D9250;
-			remoteInfo = Freeminders;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		182785A319667EE60085E4D0 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
-		182785A71966812F0085E4D0 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		24001903193CD9C400D0D784 /* slide_left_undo_icon_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = slide_left_undo_icon_active.png; sourceTree = "<group>"; };
 		24001904193CD9C400D0D784 /* slide_left_undo_icon_active@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "slide_left_undo_icon_active@2x.png"; sourceTree = "<group>"; };
 		2400190A193CDBC900D0D784 /* slide_left_undo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = slide_left_undo_icon.png; sourceTree = "<group>"; };
@@ -674,7 +664,6 @@
 		2448104818EF073B005D9250 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2448104B18EF073B005D9250 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2448105018EF073B005D9250 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Freeminders/Images.xcassets; sourceTree = "<group>"; };
-		2448105618EF073C005D9250 /* FreemindersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreemindersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2448105718EF073C005D9250 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		2448105F18EF073C005D9250 /* FreemindersTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FreemindersTests-Info.plist"; sourceTree = "<group>"; };
 		2448106118EF073C005D9250 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -964,6 +953,15 @@
 		9FFE71531A00C95300136874 /* reminder_location_icon_active@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reminder_location_icon_active@2x.png"; sourceTree = "<group>"; };
 		9FFE71541A00C95300136874 /* reminder_weather_icon_active_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reminder_weather_icon_active_blue.png; sourceTree = "<group>"; };
 		9FFE71551A00C95300136874 /* reminder_weather_icon_active_blue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reminder_weather_icon_active_blue@2x.png"; sourceTree = "<group>"; };
+		A9C6B1F81A9C573700D68E05 /* DataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataManager.h; sourceTree = "<group>"; };
+		A9C6B1F91A9C573700D68E05 /* DataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataManager.m; sourceTree = "<group>"; };
+		A9C6B1FE1A9C673C00D68E05 /* UserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserManager.h; sourceTree = "<group>"; };
+		A9C6B1FF1A9C673C00D68E05 /* UserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserManager.m; sourceTree = "<group>"; };
+		A9FEF3241A9B6C0C006DDC4C /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = libs/FacebookSDK.framework; sourceTree = "<group>"; };
+		A9FEF3251A9B6C0C006DDC4C /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = libs/Parse.framework; sourceTree = "<group>"; };
+		A9FEF3281A9B6C1E006DDC4C /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		A9FEF32A1A9B6C26006DDC4C /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		A9FEF32C1A9B6C4A006DDC4C /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtils.framework; path = libs/ParseFacebookUtils.framework; sourceTree = "<group>"; };
 		B90EBB4019E9828E00DF68C3 /* NotificationTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationTVC.h; sourceTree = "<group>"; };
 		B90EBB4119E9828E00DF68C3 /* NotificationTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationTVC.m; sourceTree = "<group>"; };
 		B90EBB4219E9828E00DF68C3 /* LocationResetVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationResetVC.h; sourceTree = "<group>"; };
@@ -1030,8 +1028,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B93FCAFF1A7A121A003B4E53 /* Parse.framework in Frameworks */,
-				182785A519667EE60085E4D0 /* FacebookSDK.framework in Frameworks */,
+				A9FEF3271A9B6C0C006DDC4C /* Parse.framework in Frameworks */,
+				A9FEF32D1A9B6C4A006DDC4C /* ParseFacebookUtils.framework in Frameworks */,
+				A9FEF3261A9B6C0C006DDC4C /* FacebookSDK.framework in Frameworks */,
+				A9FEF32B1A9B6C26006DDC4C /* Social.framework in Frameworks */,
+				A9FEF3291A9B6C1E006DDC4C /* libsqlite3.dylib in Frameworks */,
 				2448108418EF5D61005D9250 /* AudioToolbox.framework in Frameworks */,
 				2448108618EF5D68005D9250 /* CFNetwork.framework in Frameworks */,
 				24234F5B192585AF00C45389 /* CoreData.framework in Frameworks */,
@@ -1048,16 +1049,6 @@
 				2448108A18EF5D7E005D9250 /* StoreKit.framework in Frameworks */,
 				2448108818EF5D75005D9250 /* SystemConfiguration.framework in Frameworks */,
 				2448103D18EF073B005D9250 /* UIKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2448105318EF073C005D9250 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B93FCB001A7A14DD003B4E53 /* Parse.framework in Frameworks */,
-				2448105A18EF073C005D9250 /* UIKit.framework in Frameworks */,
-				2448105918EF073C005D9250 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1279,7 +1270,6 @@
 			isa = PBXGroup;
 			children = (
 				2448103518EF073B005D9250 /* Freeminders.app */,
-				2448105618EF073C005D9250 /* FreemindersTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1287,8 +1277,11 @@
 		2448103718EF073B005D9250 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				182785A71966812F0085E4D0 /* Parse.framework */,
-				182785A319667EE60085E4D0 /* FacebookSDK.framework */,
+				A9FEF32C1A9B6C4A006DDC4C /* ParseFacebookUtils.framework */,
+				A9FEF32A1A9B6C26006DDC4C /* Social.framework */,
+				A9FEF3281A9B6C1E006DDC4C /* libsqlite3.dylib */,
+				A9FEF3241A9B6C0C006DDC4C /* FacebookSDK.framework */,
+				A9FEF3251A9B6C0C006DDC4C /* Parse.framework */,
 				2411B4A01940F93300E87D60 /* MessageUI.framework */,
 				24234F5A192585AF00C45389 /* CoreData.framework */,
 				242E715C192400DA0096218F /* MapKit.framework */,
@@ -1489,6 +1482,10 @@
 				B92D27B71A790ED400A8D3DA /* InterpreterAdapterArgs.m */,
 				B92D27B81A790ED400A8D3DA /* TimeSpan.h */,
 				B92D27B91A790ED400A8D3DA /* TimeSpan.m */,
+				A9C6B1F81A9C573700D68E05 /* DataManager.h */,
+				A9C6B1F91A9C573700D68E05 /* DataManager.m */,
+				A9C6B1FE1A9C673C00D68E05 /* UserManager.h */,
+				A9C6B1FF1A9C673C00D68E05 /* UserManager.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1916,24 +1913,6 @@
 			productReference = 2448103518EF073B005D9250 /* Freeminders.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2448105518EF073C005D9250 /* FreemindersTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2448106A18EF073C005D9250 /* Build configuration list for PBXNativeTarget "FreemindersTests" */;
-			buildPhases = (
-				2448105218EF073C005D9250 /* Sources */,
-				2448105318EF073C005D9250 /* Frameworks */,
-				2448105418EF073C005D9250 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2448105C18EF073C005D9250 /* PBXTargetDependency */,
-			);
-			name = FreemindersTests;
-			productName = FreemindersTests;
-			productReference = 2448105618EF073C005D9250 /* FreemindersTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1949,10 +1928,6 @@
 								enabled = 1;
 							};
 						};
-					};
-					2448105518EF073C005D9250 = {
-						DevelopmentTeam = A339L8W434;
-						TestTargetID = 2448103418EF073B005D9250;
 					};
 				};
 			};
@@ -1976,7 +1951,6 @@
 			projectRoot = "";
 			targets = (
 				2448103418EF073B005D9250 /* Freeminders */,
-				2448105518EF073C005D9250 /* FreemindersTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2333,14 +2307,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2448105418EF073C005D9250 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2448106218EF073C005D9250 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2385,6 +2351,7 @@
 				24CA66C9191AE34A00E8D971 /* DateTimeTrigger.m in Sources */,
 				B938CA0C1A0D11FD0082A272 /* UserPurchase.m in Sources */,
 				244810CB18EF619D005D9250 /* Const.m in Sources */,
+				A9C6B2001A9C673C00D68E05 /* UserManager.m in Sources */,
 				B99D64E519D6DB140099F6D8 /* UserContact.m in Sources */,
 				B99D64F419D6DF340099F6D8 /* AboutAndHelpTVC.m in Sources */,
 				2406928B193F82A000B6A1B1 /* BorderedButton.m in Sources */,
@@ -2427,6 +2394,7 @@
 				24C7FAD11919942400980B4B /* WeatherTriggerTVC.m in Sources */,
 				B9964DE919E5624C008AEF77 /* UserLocationTVC.m in Sources */,
 				B90EBB4419E9828E00DF68C3 /* NotificationTVC.m in Sources */,
+				A9C6B1FA1A9C573700D68E05 /* DataManager.m in Sources */,
 				241B41EC18EF7AE9001DB361 /* TaskCell.m in Sources */,
 				244810B518EF60CA005D9250 /* RECommonFunctions.m in Sources */,
 				2431A3331939132700FA7716 /* StoreHelper.m in Sources */,
@@ -2448,15 +2416,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2448105218EF073C005D9250 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B92D27C11A7929F500A8D3DA /* InterpreterTests.m in Sources */,
-				2448106418EF073C005D9250 /* FreemindersTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2464,11 +2423,6 @@
 			isa = PBXTargetDependency;
 			name = RestKit;
 			targetProxy = 24234F571925858400C45389 /* PBXContainerItemProxy */;
-		};
-		2448105C18EF073C005D9250 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2448103418EF073B005D9250 /* Freeminders */;
-			targetProxy = 2448105B18EF073C005D9250 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2579,13 +2533,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Areddy Sandeep Reddy (M336N9S4AG)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Areddy Sandeep Reddy (M336N9S4AG)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/spencermorris/Documents/FacebookSDK,
-					/Users/basava/Desktop,
+					"$(PROJECT_DIR)/libs",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Freeminders/Freeminders-Prefix.pch";
@@ -2601,7 +2554,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1aa8458a-0104-4e43-a2ed-c6dc31023b1e";
+				PROVISIONING_PROFILE = "c706b641-ee8c-4eb9-a76a-db62b923499c";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2611,13 +2564,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Mobigesture Software Pvt. Ltd (A339L8W434)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Mobigesture Software Pvt. Ltd (A339L8W434)";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/spencermorris/Documents/FacebookSDK,
-					/Users/basava/Desktop,
+					"$(PROJECT_DIR)/libs",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Freeminders/Freeminders-Prefix.pch";
@@ -2633,56 +2585,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "8fd1b29e-093a-4b7e-afa2-50edbe5151f8";
+				PROVISIONING_PROFILE = "c706b641-ee8c-4eb9-a76a-db62b923499c";
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		2448106B18EF073C005D9250 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Freeminders.app/Freeminders";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Freeminders/Freeminders-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "FreemindersTests/FreemindersTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		2448106C18EF073C005D9250 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Freeminders.app/Freeminders";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(PROJECT_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Freeminders/Freeminders-Prefix.pch";
-				INFOPLIST_FILE = "FreemindersTests/FreemindersTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -2703,15 +2607,6 @@
 			buildConfigurations = (
 				2448106818EF073C005D9250 /* Debug */,
 				2448106918EF073C005D9250 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2448106A18EF073C005D9250 /* Build configuration list for PBXNativeTarget "FreemindersTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2448106B18EF073C005D9250 /* Debug */,
-				2448106C18EF073C005D9250 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

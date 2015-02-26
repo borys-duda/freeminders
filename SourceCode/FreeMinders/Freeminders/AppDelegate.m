@@ -9,6 +9,7 @@
 #import <RestKit/RestKit.h>
 #import "AppDelegate.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import <ParseFacebookUtils/PFFacebookUtils.h>
 
 #import "Utils.h"
 #import "Const.h"

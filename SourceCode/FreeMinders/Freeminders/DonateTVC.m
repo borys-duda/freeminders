@@ -11,6 +11,8 @@
 #import "StoreItem.h"
 #import "UserPurchase.h"
 #import "Utils.h"
+#import "DataManager.h"
+#import "UserManager.h"
 
 @interface DonateTVC ()
 
@@ -40,12 +42,7 @@
 -(void)performLoadDonations
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
-    [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
-    [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeDonation]];
-    [query setLimit:1000];
-    [query orderBySortDescriptors:[NSArray arrayWithObjects: [NSSortDescriptor sortDescriptorWithKey:@"price" ascending:YES], nil]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadSubscriptionWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"STORE GROUPS LOADED");
         //        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [[UserData instance] setStoreGroupsByLetter:objects];
@@ -147,7 +144,7 @@
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     
     UserPurchase *newPurchase = [[UserPurchase alloc] init];
-    newPurchase.user = [PFUser currentUser];
+    newPurchase.user = [[UserManager sharedInstance] getCurrentUser];
     newPurchase.storeItemId = [purchase objectForKey:@"storeItemId"];
     newPurchase.receiptId = [purchase objectForKey:@"receiptId"];
     newPurchase.storeItem = [UserData instance].storeGroup;
@@ -155,7 +152,8 @@
     newPurchase.itemType = [NSNumber numberWithInt:typeDonation];
     newPurchase.lastTransactionDate = [purchase objectForKey:@"lastTransactionDate"];
     //    newPurchase.expireDate = [[purchase objectForKey:@"lastTransactionDate"] dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
-    [newPurchase saveEventually:^(BOOL succeeded, NSError *error) {
+    
+    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];

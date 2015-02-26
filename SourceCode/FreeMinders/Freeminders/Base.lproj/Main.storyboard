@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -6993,13 +6993,13 @@ I can sincerely state that any donations you send our way would be greatly appre
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="BUf-9j-K7p"/>
+        <segue reference="uQC-RS-r7s"/>
+        <segue reference="AmS-6J-P9g"/>
+        <segue reference="94Z-g8-H8b"/>
+        <segue reference="kdH-hF-Fft"/>
+        <segue reference="9ON-kx-Wsh"/>
+        <segue reference="ony-mq-Yye"/>
         <segue reference="JlG-JI-emF"/>
         <segue reference="idB-ss-knm"/>
-        <segue reference="9ON-kx-Wsh"/>
-        <segue reference="d4b-2z-i0d"/>
-        <segue reference="zI4-8S-LO6"/>
-        <segue reference="BpA-o9-g72"/>
-        <segue reference="5VF-ju-a0w"/>
     </inferredMetricsTieBreakers>
 </document>

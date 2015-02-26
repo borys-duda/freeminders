@@ -13,7 +13,10 @@
 #import "StoreItem.h"
 #import "ReminderStep.h"
 #import "UserInfo.h"
-#import <Parse/Parse.h>
+//#import <Parse/Parse.h>
+//borys edit
+#import <ParseFacebookUtils/PFFacebookUtils.h>
+
 #import "Reachability.h"
 #import "UserContact.h"
 #import "UserLocation.h"

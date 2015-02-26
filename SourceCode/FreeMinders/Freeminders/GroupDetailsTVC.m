@@ -10,6 +10,7 @@
 #import "UserData.h"
 #import "ReminderGroup.h"
 #import "Reminder.h"
+#import "DataManager.h"
 
 //#define NSLog( a ) ""
 //#define NSLog( a, b )
@@ -494,12 +495,15 @@ NSString  *SEGU_NOTIFICATION_SEREEN=@"notificationScreen",*SEGU_LOCATION_SEREEN=
     self.isEditing = ! self.isEditing;
     if([self.editButton.titleLabel.text isEqualToString:@"Save"])
     {
-        ((ReminderGroup*)([UserData instance].reminderGroup)).desc = self.discriptionOfGroupTextView.text;
-        ((ReminderGroup*)([UserData instance].reminderGroup)).name = self.groupTitleTextView.text;
-        [((ReminderGroup*)([UserData instance].reminderGroup)) saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//        ((ReminderGroup*)([UserData instance].reminderGroup)).desc = self.discriptionOfGroupTextView.text;
+//        ((ReminderGroup*)([UserData instance].reminderGroup)).name = self.groupTitleTextView.text;
+        [UserData instance].reminderGroup.desc = self.discriptionOfGroupTextView.text;
+        [UserData instance].reminderGroup.name = self.groupTitleTextView.text;
+        
+        [[DataManager sharedInstance] saveObject:[UserData instance].reminderGroup withBlock:^(BOOL succeeded, NSError *error) {
             if(succeeded)
             {
-                 self.reminderGroupCancelValues = [[UserData instance].reminderGroup copy];
+                self.reminderGroupCancelValues = [[UserData instance].reminderGroup copy];
                 [self.tableView reloadData];
             }
             else{
@@ -516,8 +520,10 @@ NSString  *SEGU_NOTIFICATION_SEREEN=@"notificationScreen",*SEGU_LOCATION_SEREEN=
 
 -(void)pickerDone
 {
-    ((ReminderGroup*)([UserData instance].reminderGroup)).desc = self.discriptionOfGroupTextView.text;
-    ((ReminderGroup*)([UserData instance].reminderGroup)).name = self.groupTitleTextView.text;
+//    ((ReminderGroup*)([UserData instance].reminderGroup)).desc = self.discriptionOfGroupTextView.text;
+//    ((ReminderGroup*)([UserData instance].reminderGroup)).name = self.groupTitleTextView.text;
+    [UserData instance].reminderGroup.desc = self.discriptionOfGroupTextView.text;
+    [UserData instance].reminderGroup.name = self.groupTitleTextView.text;
     [self hideKeyBoard];
     [self.tableView reloadData];
 }

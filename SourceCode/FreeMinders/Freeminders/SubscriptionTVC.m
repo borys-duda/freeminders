@@ -14,6 +14,7 @@
 #import "UserPurchase.h"
 #import "Utils.h"
 #import "StoreGroupCell.h"
+#import "DataManager.h"
 
 @interface SubscriptionTVC ()
 
@@ -59,12 +60,7 @@ bool isActiveSubscriptionEnabled;
 -(void)performLoadSubscripions
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
-    [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
-    [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeSubscription]];
-    [query setLimit:1000];
-    [query orderBySortDescriptors:[NSArray arrayWithObjects: [NSSortDescriptor sortDescriptorWithKey:@"price" ascending:YES], nil]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadSubscriptionWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"STORE GROUPS LOADED");
         //        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [[UserData instance] setStoreGroupsByLetter:objects];
@@ -291,13 +287,7 @@ bool isActiveSubscriptionEnabled;
     NSDictionary *purchase = notification.userInfo;
     [self.tableView reloadData];
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-    
-    PFQuery *purchaseQuery = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
-    [purchaseQuery whereKey:@"user" equalTo:[PFUser currentUser]];
-    [purchaseQuery whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeSubscription]];
-    [purchaseQuery setLimit:1000];
-    //    [purchaseQuery whereKey:@"storeItemId" equalTo:[UserData instance].storeGroup];
-    [purchaseQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadUserPurchasedWithBlock:^(NSArray *objects, NSError *error) {
         if (objects.count) {
             UserPurchase *previousPuchase = objects.firstObject;
             previousPuchase.storeItemId = [purchase objectForKey:@"storeItemId"];
@@ -315,7 +305,7 @@ bool isActiveSubscriptionEnabled;
                 // Subscription expired
                 previousPuchase.expireDate = [previousPuchase.expireDate dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
             }
-            [previousPuchase saveEventually];
+            [[DataManager sharedInstance] saveToLocalWithObject:previousPuchase];
             [UserData instance].userSubscription = previousPuchase;
             NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
             for (int i=0; i < prevPurchases.count; i++) {
@@ -335,14 +325,14 @@ bool isActiveSubscriptionEnabled;
             newPurchase.itemType = [NSNumber numberWithInt:typeSubscription];
             newPurchase.lastTransactionDate = [purchase objectForKey:@"lastTransactionDate"];
             newPurchase.expireDate = [[purchase objectForKey:@"lastTransactionDate"] dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
-            [newPurchase saveEventually:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
                 NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
                 [prevPurchases addObject:newPurchase];
                 [UserData instance].userPurchases = [prevPurchases mutableCopy];
             }];
             [UserData instance].userSubscription = newPurchase;
         }
-
+        
         [[NSUserDefaults standardUserDefaults] setObject:[UserData instance].userSubscription.expireDate forKey:@"subscriptionExpireDate"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         isActiveSubscriptionEnabled = YES;

@@ -14,6 +14,7 @@
 #import "Utils.h"
 #import "MapAnnotation.h"
 #import "UserLocation.h"
+#import "DataManager.h"
 
 #define DEFAULT_RADIUS 3.0
 #define METERS_PER_MILE 1609.0
@@ -78,8 +79,8 @@ double MAP_SPAN = 0.10;
             ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).location = [PFGeoPoint geoPointWithLocation:[UserData instance].location];
         }
         // Address
-         ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).address = [UserData instance].userInfo.defaultLocationAddress;
-         [[UserData instance].task saveInBackground];
+        ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).address = [UserData instance].userInfo.defaultLocationAddress;
+        [[DataManager sharedInstance] saveObject:[UserData instance].task];
     }
     UserLocation *usrLocation = ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).userLocation;
     if (usrLocation && ![usrLocation isEqual:[NSNull null]]) {

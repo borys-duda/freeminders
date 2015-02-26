@@ -12,6 +12,8 @@
 #import "ReminderGroup.h"
 #import "UserData.h"
 #import "StoreVC.h"
+#import "UserManager.h"
+#import "DataManager.h"
 
 @interface TaskSetsVC ()
 
@@ -239,10 +241,10 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
         if (groupName.length > 0) {
             ReminderGroup *taskSet = [[ReminderGroup alloc] init];
             taskSet.name = self.addGroupTextField.text ;
-            taskSet.user = [PFUser currentUser];
+            taskSet.user = [[UserManager sharedInstance] getCurrentUser];
             
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [taskSet saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] saveObject:taskSet withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 if (succeeded) {
@@ -308,13 +310,7 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
 
 - (void)performLoadTaskSets
 {
-    PFQuery *query = [PFQuery queryWithClassName:[ReminderGroup parseClassName]];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    if (![UserData instance].isHavingActiveSubscription) {
-        [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
-    }
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadTaskSetsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"TASK SETS LOADED");
         if ([objects.firstObject isKindOfClass:[ReminderGroup class]])
             [UserData instance].taskSets = objects;
@@ -325,16 +321,12 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
 
 -(void)performDeleteAllTasksWithTaskSetId:(ReminderGroup *)taskSet
 {
-    PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
-    [query whereKey:@"reminderGroup" equalTo:taskSet];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-        
+    [[DataManager sharedInstance] deleteAllTasksWithTaskSetId:taskSet withBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"TASKS LOADED");
         if (! error) {
-          /*  for (Reminder *task in objects) {
-                [task deleteEventually];
-            }*/
+            /*  for (Reminder *task in objects) {
+             [task deleteEventually];
+             }*/
             [PFObject deleteAllInBackground:objects block:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 NSMutableArray *mutableFilterGroups = [[UserData instance].filterGroups mutableCopy];
@@ -347,9 +339,7 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
         }else{
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         }
-
     }];
-    
    
 }
 

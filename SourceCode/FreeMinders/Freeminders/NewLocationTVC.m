@@ -10,6 +10,7 @@
 #import "UserData.h"
 #import "Reminder.h"
 #import "WeatherTrigger.h"
+#import "DataManager.h"
 
 
 
@@ -414,7 +415,7 @@ double MP_SPAN = 0.10;
     }else {
         [[UserData instance].userLocations addObject:loctionTitle];
     }
-    [PFObject saveAllInBackground:[UserData instance].userLocations block:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveDatas:[UserData instance].userLocations withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         if (!error) {
             NSLog(@"User Locations saved");

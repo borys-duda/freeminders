@@ -9,6 +9,7 @@
 #import "EmailAfterEditVC.h"
 #import "UserContact.h"
 #import "UserData.h"
+#import "DataManager.h"
 
 
 @interface EmailAfterEditVC ()
@@ -96,15 +97,22 @@ int sectionsCount;
 }
 -(void)performLoadUserContacts
 {
-    PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
-    [query whereKey:@"owner" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+//    PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
+//    [query whereKey:@"owner" equalTo:[PFUser currentUser]];
+//    [query setLimit:1000];
+//    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+//        NSLog(@"UserConatcts LOADED");
+//        if ([objects.firstObject isKindOfClass:[UserContact class]])
+//            [UserData instance].userContacts = [objects mutableCopy];
+//    }];
+//    NSLog(@"number of objects are %i",[UserData instance].userContacts.count);
+
+    [[DataManager sharedInstance] loadUserContactsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"UserConatcts LOADED");
         if ([objects.firstObject isKindOfClass:[UserContact class]])
             [UserData instance].userContacts = [objects mutableCopy];
+        NSLog(@"number of objects are %i",[UserData instance].userContacts.count);
     }];
-    NSLog(@"number of objects are %i",[UserData instance].userContacts.count);
 }
 - (IBAction)cancelButtonPressed
 {

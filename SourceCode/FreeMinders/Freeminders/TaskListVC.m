@@ -17,6 +17,7 @@
 #import "FrostedViewController.h"
 #import "LocalNotificationManager.h"
 #import "AppDelegate.h"
+#import "DataManager.h"
 
 @interface TaskListVC ()
 
@@ -531,15 +532,14 @@ bool isFirstTime;
     [UserData instance].task.nextNotificationDate = [UserData instance].task.snoozedUntilDate;
     [UserData instance].task.notificationSent = NO;
     [self.snoozeTextField resignFirstResponder];
-    [[UserData instance].task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-           if(succeeded)
-           {
+    [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
+        if(succeeded)
+        {
 //           [self performLoadTasks];
-               [self setupActiveDormantArrays];
-               [LocalNotificationManager setNotificationsForAllTasks];
-           }
-
-       }];
+            [self setupActiveDormantArrays];
+            [LocalNotificationManager setNotificationsForAllTasks];
+        }
+    }];
 }
 
 #pragma mark- PullToRefresh TableView methods
@@ -988,7 +988,7 @@ bool isFirstTime;
                     task.isActive = YES;
                 }
                 
-                [task saveInBackground];
+                [[DataManager sharedInstance] saveObject:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self.tableView reloadData];
             } else if (indexPath.section == SECTION_DORMANT) {
@@ -1002,7 +1002,7 @@ bool isFirstTime;
                 }
                 task.lastCompletionDate = nil;
                 
-                [task saveInBackground];
+                [[DataManager sharedInstance] saveObject:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self performLoadTasks];
             } else if (indexPath.section == SECTION_SCHEDULED){
@@ -1011,7 +1011,7 @@ bool isFirstTime;
                 [task setAllStepsChecked:NO];
                 task.lastNotificationDate = [NSDate date];
                 task.snoozedUntilDate = nil;
-                [task saveInBackground];
+                [[DataManager sharedInstance] saveObject:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self performLoadTasks];
             }
@@ -1160,7 +1160,7 @@ bool isFirstTime;
   
     }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self performLoadTasks];
     }];
@@ -1285,7 +1285,7 @@ bool isFirstTime;
     }
     [UserData instance].task.nextNotificationDate = [UserData instance].task.snoozedUntilDate;
     [UserData instance].task.notificationSent = NO;
-    [[UserData instance].task saveInBackground];
+    [[DataManager sharedInstance] saveObject:[UserData instance].task];
     [self setupActiveDormantArrays];
     
     self.snoozeView.hidden = YES;
@@ -1468,21 +1468,7 @@ bool isFirstTime;
     }
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    if (![UserData instance].isHavingActiveSubscription) {
-        [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
-    }
-   query.cachePolicy = kPFCachePolicyNetworkElseCache;
-    [query orderBySortDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"lastNotificationDate" ascending:YES], [NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO], nil]];
-    [query includeKey:@"weatherTriggers.userLocation"];
-    [query includeKey:@"locationTriggers.userLocation"];
-    [query includeKey:@"dateTimeTriggers"];
-    [query includeKey:@"reminderSteps"];
-    [query includeKey:@"userContacts"];
-    [query includeKey:@"reminderGroup"];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadDetailedTasksWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [self.refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
         NSLog(@"TASKS LOADED IN Tasklist");
@@ -1491,19 +1477,19 @@ bool isFirstTime;
                 NSMutableArray *mutableTaskIds = [[[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY] mutableCopy];
                 if ([mutableTaskIds containsObject:task.objectId]) {
                     task.lastNotificationDate = [NSDate date];
-                    [task saveInBackground];
+                    [[DataManager sharedInstance] saveObject:task];
                     [mutableTaskIds removeObject:task.objectId];
                     [[NSUserDefaults standardUserDefaults] setObject:[mutableTaskIds copy] forKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY];
                 }
                 
                 if (task.snoozedUntilDate && ! [Utils isDateInFuture:task.snoozedUntilDate]) {
                     task.snoozedUntilDate = nil;
-                    [task saveInBackground];
+                    [[DataManager sharedInstance] saveObject:task];
                 } else if (task.nextNotificationDate && ! [Utils isDateInFuture:task.nextNotificationDate]) {
                     task.lastNotificationDate = task.nextNotificationDate;
                     task.nextNotificationDate = nil;
                     [task setAllStepsChecked:NO];
-                    [task saveInBackground];//Call Doug About Lunch
+                    [[DataManager sharedInstance] saveObject:task];
                 }
             }
             [UserData instance].tasks = objects;
@@ -1530,7 +1516,7 @@ bool isFirstTime;
             
             [LocalNotificationManager setNotificationsForAllTasks];
             [self setupActiveDormantArrays];
-
+            
         } else {
             NSLog(@"ERROR LOADING TASKS");
         }
@@ -1541,14 +1527,8 @@ bool isFirstTime;
 
 - (void)performLoadTaskSets
 {
-    PFQuery *query = [PFQuery queryWithClassName:[ReminderGroup parseClassName]];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    if (![UserData instance].isHavingActiveSubscription) {
-        [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
-    }
-    query.cachePolicy = kPFCachePolicyNetworkElseCache;
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    
+    [[DataManager sharedInstance] loadTaskSetsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"TASK SETS LOADED");
         if ([objects.firstObject isKindOfClass:[ReminderGroup class]] || objects.count == 0)
             [UserData instance].taskSets = objects;
@@ -1561,7 +1541,8 @@ bool isFirstTime;
 - (void)performDeleteTask:(Reminder* )task
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [task deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    
+    [[DataManager sharedInstance] deleteObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self performLoadTasks];
     }];
@@ -1695,7 +1676,7 @@ bool isFirstTime;
             }
         }
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [PFObject saveAllInBackground:configuredTasks block:^(BOOL succeeded, NSError *error) {
+        [[DataManager sharedInstance] saveDatas:configuredTasks withBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             }else {

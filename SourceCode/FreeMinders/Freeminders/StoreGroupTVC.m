@@ -9,6 +9,7 @@
 #import "StoreGroupTVC.h"
 #import "Utils.h"
 #import "StoreHelper.h"
+#import "DataManager.h"
 
 @interface StoreGroupTVC ()
 
@@ -128,11 +129,14 @@ NSInteger SECTION_SAMPLE_MINDERS = 2;
         newPurchase.expireDate = [UserData instance].userSubscription.expireDate;
         newPurchase.amountPaid = [NSNumber numberWithInt:0];
     }
-    [newPurchase saveEventually:^(BOOL succeeded, NSError *error) {
+    
+    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];
     }];
+    
+    
     [Utils addTasksFromStoreGroup:self.view];
 }
 

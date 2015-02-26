@@ -16,6 +16,7 @@
 #import "Const.h"
 #import "UserData.h"
 #import "UserSetting.h"
+#import "DataManager.h"
 
 #define DEFAULT_MAP_SPAN 0.10
 #define NOTIFY_ME_BEFORE_NUMBER_LIMIT_IN_SETTINGS 121
@@ -100,7 +101,8 @@ bool notifyMe,LocationSleep,temperature;
     [self setUpUi];
 }
 - (IBAction)saveSettings:(id)sender {
-    [[UserData instance].userSettings saveInBackground];
+//    [[UserData instance].userSettings saveInBackground];
+    [[DataManager sharedInstance] saveObject:[UserData instance].userSettings];
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 -(void)setUpUi
@@ -154,10 +156,7 @@ bool notifyMe,LocationSleep,temperature;
 }
 -(void)performloadsettings
 {
-    PFQuery *userInfoQuery = [PFQuery queryWithClassName:[UserSetting parseClassName]];
-    [userInfoQuery whereKey:@"user" equalTo:[PFUser currentUser]];
-    [userInfoQuery setLimit:1000];
-    [userInfoQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadUserSettingsWithBlock:^(NSArray *objects, NSError *error) {
         if ([objects.firstObject isKindOfClass:[UserSetting class]]) {
             [UserData instance].userSettings = objects.firstObject;
         }

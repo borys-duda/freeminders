@@ -9,9 +9,10 @@
 #import "LandingPageVC.h"
 #import "Utils.h"
 #import "Const.h"
-#import <Parse/Parse.h>
+//#import <Parse/Parse.h>
 #import "AppDelegate.h"
 #import "LoginVC.h"
+#import "UserManager.h"
 
 @interface LandingPageVC ()
 
@@ -34,7 +35,7 @@ bool isAgreement;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    if ([PFUser currentUser]) { // User logged in
+    if ([[UserManager sharedInstance] getCurrentUser]) { // User logged in
         NSLog(@"USER LOGGED IN");
         [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
         [Utils loadUserInfoForLogin];

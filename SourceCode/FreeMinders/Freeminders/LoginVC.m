@@ -8,8 +8,11 @@
 
 #import "LoginVC.h"
 #import "Utils.h"
-#import <Parse/Parse.h>
+//#import <Parse/Parse.h>
+//#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "Const.h"
+#import "DataManager.h"
+#import "UserManager.h"
 
 #define SEGUE_SIGNUP @"signup"
 #define DEVELOPMENT 0
@@ -127,16 +130,14 @@ NSString *emailRegex ;
 {
 
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    // The permissions requested from the user
-    NSArray *permissionsArray = @[ @"email"];
     
-    // Login PFUser using Facebook
-    [PFFacebookUtils logInWithPermissions:permissionsArray block:^(PFUser *user, NSError *error) {
+    [[UserManager sharedInstance] loginFacebookUserWithBlock:^(PFUser *user, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         if (!user) {
             if (!error) {
                 NSLog(@"The user cancelled the Facebook login.");
+                [Utils showSimpleAlertViewWithTitle:@"Login Cancelled" content:@"You cancelled the Facebook login." andDelegate:self];
             } else {
                 NSLog(@"An error occurred: %@", error);
                 [Utils showSimpleAlertViewWithTitle:@"Login Failed" content:@"Either the email address provided does not have an account associated with it or the password you supplied is incorrect. Please check these values and try again." andDelegate:self];
@@ -172,7 +173,7 @@ NSString *emailRegex ;
 }
 - (void)defaultRemindersCallBackForSignup:(NSError *)error {
     [MBProgressHUD hideHUDForView:self.view animated:YES];
-    [PFUser logOut];
+    [[UserManager sharedInstance] logoutUser];
     [UserData clearInstance];
 }
 
@@ -185,20 +186,15 @@ NSString *emailRegex ;
             NSString *email = [alertView textFieldAtIndex:0].text;
             
             if (email.length > 0) {
-                [PFUser requestPasswordResetForEmailInBackground:email];
+                [[UserManager sharedInstance] requestResetPasswordWithEmail:email];
                 [Utils showSimpleAlertViewWithTitle:@"Password Reset Sent" content:@"Your password reset instructions have been emailed to you" andDelegate:nil];
             }
         }
     }else if (self.alertType == resendVerificationMail) {
         if (buttonIndex == 1) {
-            [[PFUser currentUser] setEmail:@"foo@foo.com"];
-            [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                [[PFUser currentUser] setEmail:[self.usernameTextField.text lowercaseString]];
-                [[PFUser currentUser] setUsername:[self.usernameTextField.text lowercaseString]];
-                [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    [PFUser logOut];
-                    [UserData clearInstance];
-                }];
+            [[UserManager sharedInstance] resendVerificationEmail:self.usernameTextField.text withBlock:^(BOOL succeeded, NSError *error) {
+                [[UserManager sharedInstance] logoutUser];
+                [UserData clearInstance];
             }];
             [Utils showSimpleAlertViewWithTitle:@"Verification mail Sent" content:@"Email verification link has been emailed to you" andDelegate:nil];
         }
@@ -220,45 +216,42 @@ NSString *emailRegex ;
         NSLog(@"ATTEMPT TO LOGIN WITH USERNAME:%@ AND PASSWORD:%@",
               self.usernameTextField.text,
               self.passwordTextField.text);
+        NSString *username = [self.usernameTextField.text lowercaseString];
+        NSString *password = self.passwordTextField.text;
         
-        if (self.usernameTextField.text.length < 1 || self.passwordTextField.text.length < 1) {
+        if (username.length < 1 || password.length < 1) {
             [Utils showSimpleAlertViewWithTitle:@"Invalid Login Credentials" content:@"Your email and password cannot be blank" andDelegate:nil];
             return;
         }
         
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         
-        [PFUser logInWithUsernameInBackground:[self.usernameTextField.text lowercaseString] password:self.passwordTextField.text
-                                        block:^(PFUser *user, NSError *error) {
-                                            [MBProgressHUD hideHUDForView:self.view animated:YES];
-                                            NSLog(@"%@ %@ --- %d",[user objectForKey:@"emailVerified"], [([user objectForKey:@"emailVerified"]) class],error.code);
-                                            BOOL isVerified = [[user objectForKey:@"emailVerified"] boolValue];
+        [[UserManager sharedInstance] loginUser:username withPassword:password withBlock:^(PFUser *user, NSError *error) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            NSLog(@"%@ %@ --- %d",[user objectForKey:@"emailVerified"], [([user objectForKey:@"emailVerified"]) class],error.code);
+            BOOL isVerified = [[user objectForKey:@"emailVerified"] boolValue];
 #if DEVELOPMENT
-                                            isVerified = YES;
+            isVerified = YES;
 #endif
-                                            if(user && isVerified) {
-                                                if(isFirstTimeInstallationApp){
-                                                    [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
-//                                                    if(![Utils performLoadTasks])
-//                                                    {
-//                                                        [Utils loadDefaultTasks];
-//                                                    }
-                                                }else{
-                                                    [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
-                                                }
-                                            }else if (user && (!isVerified)) {
-                                                UIAlertView *verifyAlert = [[UIAlertView alloc] initWithTitle:@"Login Failed" message:@"Your email is not verified. Please check your inbox and click on link provided." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:@"Resend", nil];
-                                                self.alertType = resendVerificationMail;
-                                                [verifyAlert show];
-                                            } else if(!user) {
-                                                // alert user that login credentials failed
-                                                NSString *msg = @"Either the email address provided does not have an account associated with it or the password you supplied is incorrect. Please check these values and try again.";
-                                                if (error.code == 100) {
-                                                    msg = @"The Internet connection appears to be offline.";
-                                                }
-                                                [Utils showSimpleAlertViewWithTitle:@"Login Failed" content:msg andDelegate:nil];
-                                            }
-                                        }];
+            if(user && isVerified) {
+                if(isFirstTimeInstallationApp){
+                    [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
+                }else{
+                    [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
+                }
+            }else if (user && (!isVerified)) {
+                UIAlertView *verifyAlert = [[UIAlertView alloc] initWithTitle:@"Login Failed" message:@"Your email is not verified. Please check your inbox and click on link provided." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:@"Resend", nil];
+                self.alertType = resendVerificationMail;
+                [verifyAlert show];
+            } else if(!user) {
+                // alert user that login credentials failed
+                NSString *msg = @"Either the email address provided does not have an account associated with it or the password you supplied is incorrect. Please check these values and try again.";
+                if (error.code == 100) {
+                    msg = @"The Internet connection appears to be offline.";
+                }
+                [Utils showSimpleAlertViewWithTitle:@"Login Failed" content:msg andDelegate:nil];
+            }
+        }];
     }
     else{
         UIAlertView *theAlert = [[UIAlertView alloc] initWithTitle:@""
@@ -278,38 +271,33 @@ NSString *emailRegex ;
     
     if(verify)
     {
-    NSLog(@"ATTEMPT TO CREATE ACCOUNT WITH EMAIL:%@ AND PASSWORD:%@",
-          self.usernameTextField.text,
-          self.passwordTextField.text);
-    
-    PFUser *user = [PFUser user];
-    user.password = self.passwordTextField.text;
-    user.email = [self.usernameTextField.text lowercaseString];
-    user.username = [self.usernameTextField.text lowercaseString];
-    
-    if (user.email.length < 1 || user.password.length < 4) {
-        [Utils showSimpleAlertViewWithTitle:@"Invalid Signup" content:@"Your email must be a valid email address and your password must be at least 4 characters" andDelegate:nil];
-        return;
-    }
-    
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        NSLog(@"ATTEMPT TO CREATE ACCOUNT WITH EMAIL:%@ AND PASSWORD:%@",
+              self.usernameTextField.text,
+              self.passwordTextField.text);
+        NSString *username = [self.usernameTextField.text lowercaseString];
+        NSString *password = [self.passwordTextField.text lowercaseString];
         
-        if (!error) {
-            [Utils showSimpleAlertViewWithTitle:VERIFY_TITLE content:VERIFY_MESSAGE andDelegate:nil];;
-            self.passwordTextField.text=@"";
-            self.usernameTextField.text=@"";
-//            [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
-//            [Utils loadUserInfoForLogin];
-            [Utils loadDefaultTasks:self selector:@selector(defaultRemindersCallBackForSignup:)];
-        } else {
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            NSString *errorString = [error userInfo][@"error"];
-            // show the errorString in alert view
-            [Utils showSimpleAlertViewWithTitle:@"Signup Failed" content:errorString andDelegate:nil];
+        if(username.length < 1 || password.length < 4) {
+            [Utils showSimpleAlertViewWithTitle:@"Invalid Signup" content:@"Your email must be a valid email address and your password must be at least 4 characters" andDelegate:nil];
+            return;
         }
-    }];
+        
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        
+        [[UserManager sharedInstance] signUpUser:username withPassword:password withBlock:^(BOOL succeeded, NSError *error) {
+            if (!error) {
+                [Utils showSimpleAlertViewWithTitle:VERIFY_TITLE content:VERIFY_MESSAGE andDelegate:nil];;
+                self.passwordTextField.text=@"";
+                self.usernameTextField.text=@"";
+                [Utils loadDefaultTasks:self selector:@selector(defaultRemindersCallBackForSignup:)];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                NSString *errorString = [error userInfo][@"error"];
+                // show the errorString in alert view
+                [Utils showSimpleAlertViewWithTitle:@"Signup Failed" content:errorString andDelegate:nil];
+            }
+        }];
+        
     }
     else{
         UIAlertView *theAlert = [[UIAlertView alloc] initWithTitle:@""

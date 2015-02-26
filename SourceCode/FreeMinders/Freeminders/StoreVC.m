@@ -14,6 +14,8 @@
 #import "UserPurchase.h"
 #import "StoreHelper.h"
 #import <StoreKit/StoreKit.h>
+#import "DataManager.h"
+#import "UserManager.h"
 
 @interface StoreVC ()
 @property (strong,nonatomic)  UIView *actionMenu;
@@ -166,7 +168,7 @@ bool isPurchased;
         newPurchase.expireDate = [UserData instance].userSubscription.expireDate;
         newPurchase.amountPaid = [NSNumber numberWithInt:0];
     }
-    [newPurchase saveEventually:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];
@@ -400,19 +402,7 @@ bool isPurchased;
 - (void)performLoadStoreGroups
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
-    [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
-    [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeIndividual]];
-    [query includeKey:@"reminderGroups"];
-    [query includeKey:@"reminderGroups.reminders"];
-    [query includeKey:@"reminderGroups.reminders.weatherTriggers.userLocation"];
-    [query includeKey:@"reminderGroups.reminders.locationTriggers.userLocation"];
-    [query includeKey:@"reminderGroups.reminders.dateTimeTriggers"];
-    [query includeKey:@"reminderGroups.reminders.reminderSteps"];
-    [query includeKey:@"storeCategories"];
-    [query setLimit:1000];
-    [query orderBySortDescriptors:[NSArray arrayWithObjects: [NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO], nil]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadStoreGroupsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"STORE GROUPS LOADED");
         [[UserData instance] setStoreGroupsByLetter:objects];
         //        [self performLoadStoreTasks];
@@ -423,18 +413,12 @@ bool isPurchased;
 
 - (void)performLoadStoreTasks
 {
-    PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
-    [query whereKey:@"isStoreTask" equalTo:[NSNumber numberWithBool:YES]];
-    [query includeKey:@"weatherTriggers"];
-    [query includeKey:@"locationTriggers"];
-    [query includeKey:@"datetimeTriggers"];
-    [query includeKey:@"reminderSteps"];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadStoreTasksWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"STORE TASKS LOADED");
         [self performLoadItunesProducts];
         [UserData instance].storeTasks = objects;
         [self.tableView reloadData];
+
     }];
 }
 
@@ -457,19 +441,28 @@ bool isPurchased;
                     }
                     
                     if (!found) {
-                        PFQuery *query = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
-                        [query whereKey:@"storeItemId" equalTo:product.productIdentifier];
-                        [query whereKey:@"user" equalTo:[PFUser currentUser]];
-                        if ([query countObjects] == 0) {
-                            UserPurchase *purchase = [[UserPurchase alloc] init];
-                            purchase.user = [PFUser currentUser];
-                            purchase.storeItemId = product.productIdentifier;
-                            [purchase saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
-                                [prevPurchases addObject:purchase];
-                                [UserData instance].userPurchases = [prevPurchases mutableCopy];
-                            }];
-                        }
+//                        PFQuery *query = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
+//                        [query whereKey:@"storeItemId" equalTo:product.productIdentifier];
+//                        [query whereKey:@"user" equalTo:[PFUser currentUser]];
+//                        if ([query countObjects] == 0) {
+//                            UserPurchase *purchase = [[UserPurchase alloc] init];
+//                            purchase.user = [PFUser currentUser];
+//                            purchase.storeItemId = product.productIdentifier;
+//                            [purchase saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//                                NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
+//                                [prevPurchases addObject:purchase];
+//                                [UserData instance].userPurchases = [prevPurchases mutableCopy];
+//                            }];
+//                        }
+                        UserPurchase *purchase = [[UserPurchase alloc] init];
+                        purchase.user = [PFUser currentUser];
+                        purchase.storeItemId = product.productIdentifier;
+                        [[DataManager sharedInstance] checkUserPurchasedWithProductId:product.productIdentifier withObject:purchase withBlock:^(BOOL succeeded, NSError *error) {
+                            NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
+                            [prevPurchases addObject:purchase];
+                            [UserData instance].userPurchases = [prevPurchases mutableCopy];
+                        }];
+                        
                     }
                 }else{
                     

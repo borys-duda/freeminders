@@ -13,6 +13,7 @@
 #import "UserData.h"
 #import "Utils.h"
 #import "EditStep.h"
+#import "DataManager.h"
 
 @interface AddEditTaskTVC ()
 @property (strong,nonatomic)  UIView *actionMenu;
@@ -1004,15 +1005,15 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
         [UserData instance].didChangeTrigger = YES;
         self.task.triggerType = noTrigger;
         if (self.task.weatherTriggers.count) {
-            [[self.task.weatherTriggers objectAtIndex:0] deleteInBackground];
+            [[DataManager sharedInstance] deleteObject:[self.task.weatherTriggers objectAtIndex:0]];
         }
         self.task.weatherTriggers = nil;
         if (self.task.locationTriggers.count) {
-            [[self.task.locationTriggers objectAtIndex:0] deleteInBackground];
+            [[DataManager sharedInstance] deleteObject:[self.task.locationTriggers objectAtIndex:0]];
         }
         self.task.locationTriggers = nil;
         if (self.task.dateTimeTriggers.count) {
-            [[self.task.dateTimeTriggers objectAtIndex:0] deleteInBackground];
+            [[DataManager sharedInstance] deleteObject:[self.task.dateTimeTriggers objectAtIndex:0]];
         }
         self.task.dateTimeTriggers = nil;
     }
@@ -1251,7 +1252,7 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
     if (self.task.triggerType == noTrigger)
            self.task.lastNotificationDate = [NSDate date];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-     [self.task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:self.task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (succeeded) {
             [UserData instance].task = self.task;
@@ -1263,10 +1264,7 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
 }
 - (void)performLoadTasks
 {
-    PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadTasksWithBlock:^(NSArray *objects, NSError *error) {
         if ([objects.firstObject isKindOfClass:[Reminder class]])
             [UserData instance].tasks = objects;
         
@@ -1276,11 +1274,20 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
 
 - (void)performSaveTaskSet:(ReminderGroup *)newTaskSet
 {
-    [newTaskSet save];
-    self.task.reminderGroup = newTaskSet;
-    [UserData instance].taskSets = [[UserData instance].taskSets arrayByAddingObject:newTaskSet];
-    self.taskGroupTextField.text = self.task.reminderGroup.name;//[Utils getTaskGroupNameForId:self.task.reminderGroupId].name;
-    NSLog(@"%@",[UserData instance].taskSets);
+//    [newTaskSet save];
+//    self.task.reminderGroup = newTaskSet;
+//    [UserData instance].taskSets = [[UserData instance].taskSets arrayByAddingObject:newTaskSet];
+//    self.taskGroupTextField.text = self.task.reminderGroup.name;//[Utils getTaskGroupNameForId:self.task.reminderGroupId].name;
+//    NSLog(@"%@",[UserData instance].taskSets);
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [[DataManager sharedInstance] saveObject:newTaskSet withBlock:^(BOOL succeeded, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        self.task.reminderGroup = newTaskSet;
+        [UserData instance].taskSets = [[UserData instance].taskSets arrayByAddingObject:newTaskSet];
+        self.taskGroupTextField.text = self.task.reminderGroup.name;//[Utils getTaskGroupNameForId:self.task.reminderGroupId].name;
+        NSLog(@"%@",[UserData instance].taskSets);
+    }];
 }
 
 #pragma mark- Other methods

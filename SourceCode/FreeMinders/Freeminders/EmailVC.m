@@ -13,10 +13,12 @@
 #import "StoreItem.h"
 #import "UserPurchase.h"
 #import "Utils.h"
+#import "UserManager.h"
+#import "DataManager.h"
 
 @interface EmailVC ()
 
-@property  (weak,nonatomic) IBOutlet UITableView  *tableview;
+@property (weak, nonatomic) IBOutlet UITableView  *tableview;
 @property (weak, nonatomic) IBOutlet UITextField *firstEmailAddressTitleField;
 @property (weak, nonatomic) IBOutlet UITextField *secondEmailAddressTitleField;
 @property (weak, nonatomic) IBOutlet UITextField *thirdEmailAddressTitleField;
@@ -26,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *firstDefaultYesAreNoSwitch;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *secondDefaultYesAreNoSwitch;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *thirdDefaultYesAreNoSwitch;
-@property (weak,nonatomic) IBOutlet UIButton *notPurchasedButton;
+@property (weak, nonatomic) IBOutlet UIButton *notPurchasedButton;
 @property (weak, nonatomic) IBOutlet UIButton *cancelbutton;
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet UILabel *amountLabel;
@@ -73,7 +75,7 @@ BOOL isPurchased;
     
 //    [self performLoadUserContacts];
     
-    isPurchased = [[[PFUser currentUser] objectForKey:@"hasUnlimitedEmail"] boolValue];
+    isPurchased = [[UserManager sharedInstance] isPurchasedUser];
     self.title = isPurchased?@"Email Settings":@"Email Feature";
     [self.cancelbutton setTitle: isPurchased?@"Cancel":@"Back" forState:UIControlStateNormal] ;
     self.saveButton.hidden = !isPurchased;
@@ -105,12 +107,7 @@ BOOL isPurchased;
 -(void)performLoadSubscriptions
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
-    [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
-    [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeEmailSubscription]];
-    [query setLimit:1000];
-    [query orderBySortDescriptors:[NSArray arrayWithObjects: [NSSortDescriptor sortDescriptorWithKey:@"price" ascending:YES], nil]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadSubscriptionWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"STORE GROUPS LOADED");
         //        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [[UserData instance] setStoreGroupsByLetter:objects];
@@ -230,10 +227,7 @@ BOOL isPurchased;
 }
 -(void)performLoadUserContacts
 {
-    PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+    [[DataManager sharedInstance] loadUserContactsWithBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"UserConatcts LOADED");
         if ([objects.firstObject isKindOfClass:[UserContact class]])
             [UserData instance].userContacts = [objects mutableCopy];
@@ -293,7 +287,7 @@ BOOL isPurchased;
             if([UserData instance].userContacts.count == 3)
             {
                 UserContact *contact = [[UserData instance].userContacts objectAtIndex:i];
-                contact.user = [PFUser currentUser];
+                contact.user = [[UserManager sharedInstance] getCurrentUser];
                 switch (i) {
                     case 0:
                         contact.name = self.firstEmailAddressTitleField.text;
@@ -316,7 +310,7 @@ BOOL isPurchased;
                 [[UserData instance].userContacts replaceObjectAtIndex:i withObject:contact];
             }else{
                 UserContact *contact = [[UserContact alloc] init];
-                contact.user = [PFUser currentUser];
+                contact.user = [[UserManager sharedInstance] getCurrentUser];
                 switch (i) {
                     case 0:
                         contact.name = self.firstEmailAddressTitleField.text;
@@ -353,7 +347,7 @@ BOOL isPurchased;
 -(void)performSaveContacts
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [PFObject saveAllInBackground:[UserData instance].userContacts block:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveDatas:[UserData instance].userContacts withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (!succeeded) {
             [Utils showSimpleAlertViewWithTitle:@"Error" content:@"An error occured while saving your contacts" andDelegate:nil];
@@ -444,8 +438,7 @@ BOOL isPurchased;
 
 - (IBAction)lifeTimePurchaseAction:(UIButton *)sender
 {
-    [[PFUser currentUser] setObject:[NSNumber numberWithBool:YES] forKey:@"hasUnlimitedEmail"];
-    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[UserManager sharedInstance] userPurchaseActionWithBlock:^(BOOL succeeded, NSError *error) {
         if (error) {
             NSLog(@"Error saving user : %@",error);
             self.title = @"Email Settings";
@@ -520,7 +513,7 @@ BOOL isPurchased;
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     
     UserPurchase *newPurchase = [[UserPurchase alloc] init];
-    newPurchase.user = [PFUser currentUser];
+    newPurchase.user = [[UserManager sharedInstance] getCurrentUser];
     newPurchase.storeItemId = [purchase objectForKey:@"storeItemId"];
     newPurchase.receiptId = [purchase objectForKey:@"receiptId"];
     newPurchase.storeItem = [UserData instance].storeGroup;
@@ -532,13 +525,12 @@ BOOL isPurchased;
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];
     }];
-    [[PFUser currentUser] setObject:[NSNumber numberWithBool:YES] forKey:@"hasUnlimitedEmail"];
-    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[UserManager sharedInstance] userPurchaseActionWithBlock:^(BOOL succeeded, NSError *error) {
         if (error) {
             NSLog(@"Error saving user : %@",error);
         }else {
             self.title = @"Email Settings";
-            isPurchased = [[[PFUser currentUser] objectForKey:@"hasUnlimitedEmail"] boolValue];
+            isPurchased = [[UserManager sharedInstance] isPurchasedUser];
             [self.cancelbutton setTitle: isPurchased?@"Cancel":@"Back" forState:UIControlStateNormal] ;
             self.saveButton.hidden = !isPurchased;
             [self.tableView reloadData];

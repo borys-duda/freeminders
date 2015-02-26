@@ -8,6 +8,7 @@
 
 #import "AccountTVC.h"
 #import "Utils.h"
+#import "UserManager.h"
 
 #define SEGUE_LOGOUT @"logout"
 
@@ -58,17 +59,17 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
 - (void)setupUI
 {
     self.nameTextField.text = [UserData instance].userSettings.userName;
-    self.emailTextField.text = [PFUser currentUser].email;
+    self.emailTextField.text = [[UserManager sharedInstance] getCurrentUserEmail];
     
-    self.isLoggedInViaFacebook = [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]];
+    self.isLoggedInViaFacebook = [[UserManager sharedInstance] isLinkedWithUser];
     
     if (self.isLoggedInViaFacebook) {
         self.nameTextField.text = [UserData instance].userSettings.userName;
-        self.emailTextField.text = [PFUser currentUser].email;
+        self.emailTextField.text = [[UserManager sharedInstance] getCurrentUserEmail];
         [self.emailTextField setEnabled:NO];
         [self.passwordTextField setEnabled:NO];
     }
-    isPurchased = [[[PFUser currentUser] objectForKey:@"hasUnlimitedEmail"] boolValue];
+    isPurchased = [[UserManager sharedInstance] isPurchasedUser];
     self.emailFeatureLabel.text= isPurchased ? @"Purchased":@"Not Purchased";
     self.emailFeatureLabel.textAlignment=NSTextAlignmentCenter;
     self.subsriptionStausLabel.text=@"No Active Subscription";
@@ -105,11 +106,11 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
 {
     if (self.alertType == changeEmail) {
         if (buttonIndex == 1) {
-            [PFUser currentUser].email = [self.emailTextField.text lowercaseString];
-            [PFUser currentUser].username = [self.emailTextField.text lowercaseString];
+            NSString *email = [self.emailTextField.text lowercaseString];
             [UserData instance].userSettings.userName = self.nameTextField.text.length?self.nameTextField.text:[UserData instance].userSettings.userName;
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [PFObject saveAllInBackground:[NSArray arrayWithObjects:[UserData instance].userSettings,[PFUser currentUser], nil] block:^(BOOL succeeded, NSError *error) {
+            
+            [[UserManager sharedInstance] changeUserEmail:email andUserSetting:[UserData instance].userSettings withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 if (succeeded) {
@@ -119,48 +120,46 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
                 } else {
                     [Utils showSimpleAlertViewWithTitle:@"Email Change Failed" content:@"Your email address could not be changed. Please contact support if you have further questions" andDelegate:nil];
                 }
-                
+
             }];
+
         } else {
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         }
     } else if (self.alertType == changePassword) {
         if (buttonIndex == 1) {
-            [PFUser currentUser].password = self.passwordTextField.text;
+            NSString* password = self.passwordTextField.text;
             [UserData instance].userSettings.userName = self.nameTextField.text.length?self.nameTextField.text:[UserData instance].userSettings.userName;
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [PFObject saveAllInBackground:[NSArray arrayWithObjects:[UserData instance].userSettings,[PFUser currentUser], nil] block:^(BOOL succeeded, NSError *error) {
+            
+            [[UserManager sharedInstance] changePassword:password andUserSetting:[UserData instance].userSettings withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                
                 if (succeeded) {
                     [Utils showSimpleAlertViewWithTitle:@"Password Changed" content:@"Your password has been changed successfully" andDelegate:nil];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 } else {
                     [Utils showSimpleAlertViewWithTitle:@"Password Change Failed" content:@"Your password could not be changed. Please contact support if you have further questions" andDelegate:nil];
                 }
-                
             }];
+
         } else {
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         }
     } else if (self.alertType == changeEmailAndPassword) {
         if (buttonIndex == 1) {
-            [PFUser currentUser].email = [self.emailTextField.text lowercaseString];
-            [PFUser currentUser].username = [self.emailTextField.text lowercaseString];
+            NSString *email = [self.emailTextField.text lowercaseString];
+            NSString *password = self.passwordTextField.text;
             [UserData instance].userSettings.userName = self.nameTextField.text.length?self.nameTextField.text:[UserData instance].userSettings.userName;
-            [PFUser currentUser].password = self.passwordTextField.text;
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [PFObject saveAllInBackground:[NSArray arrayWithObjects:[UserData instance].userSettings,[PFUser currentUser], nil] block:^(BOOL succeeded, NSError *error) {
+            [[UserManager sharedInstance] changeUserEmail:email andPassword:password andUserSetting:[UserData instance].userSettings withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 if (succeeded) {
                     [Utils showSimpleAlertViewWithTitle:@"Password & Email Changed" content:@"Your password and email address have been changed successfully" andDelegate:nil];
-//                    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     [self logoutButtonPressed];
                 } else {
                     [Utils showSimpleAlertViewWithTitle:@"Password & Email Change Failed" content:@"Your password and email address could not be changed. Please contact support if you have further questions" andDelegate:nil];
                 }
-                
             }];
         } else {
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
@@ -174,7 +173,7 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    isPurchased = [[[PFUser currentUser] objectForKey:@"hasUnlimitedEmail"] boolValue];
+    isPurchased = [[UserManager sharedInstance] isPurchasedUser];
     if(indexPath.row==3)
     {
         if(!isPurchased)
@@ -199,7 +198,7 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
 
 - (IBAction)saveButtonPressed
 {
-    if (([[PFUser currentUser].email isEqualToString:self.emailTextField.text]
+    if (([[[UserManager sharedInstance] getCurrentUserEmail] isEqualToString:self.emailTextField.text]
          || self.emailTextField.text.length == 0)
         && self.passwordTextField.text.length == 0) {
          [UserData instance].userSettings.userName = self.nameTextField.text;
@@ -212,7 +211,7 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
         self.alertType = changeEmail;
         NSString *message = [NSString stringWithFormat:@"Would you like to change your email address to: %@?", self.emailTextField.text];
         [[[UIAlertView alloc] initWithTitle:@"Change Email Address?" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil] show];
-    } else if ([[PFUser currentUser].email isEqualToString:self.emailTextField.text]
+    } else if ([[[UserManager sharedInstance] getCurrentUserEmail] isEqualToString:self.emailTextField.text]
                || self.emailTextField.text.length == 0) {
         self.alertType = changePassword;
         [[[UIAlertView alloc] initWithTitle:@"Change Password?" message:@"Would you like to change your password?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil] show];
@@ -228,17 +227,17 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
      NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-    [PFQuery clearAllCachedResults];
-    [PFUser logOut];
+//    [PFQuery clearAllCachedResults];
+    [[UserManager sharedInstance] logoutUser];
     [UserData clearInstance];
-    if (self.isLoggedInViaFacebook) {
-//        NSURLRequest *url=[NSURL URLWithString:@"https://m.facebook.com/v2.2/dailog/oauth/confirm"];
-       [[NSURLCache sharedURLCache] removeAllCachedResponses];
-        [self fbDidLogout];
-        [FBSession.activeSession closeAndClearTokenInformation];
-         NSLog(@"The user is no longer associated with their Facebook account.");
-        
-    }
+//    if (self.isLoggedInViaFacebook) {
+////        NSURLRequest *url=[NSURL URLWithString:@"https://m.facebook.com/v2.2/dailog/oauth/confirm"];
+//       [[NSURLCache sharedURLCache] removeAllCachedResponses];
+//        [self fbDidLogout];
+//        [FBSession.activeSession closeAndClearTokenInformation];
+//         NSLog(@"The user is no longer associated with their Facebook account.");
+//        
+//    }
     // if([[NSUserDefaults standardUserDefaults] boolForKey:@"terms"] == NO){
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"terms"];
 //    [[NSUserDefaults standardUserDefaults] synchronize];
@@ -246,17 +245,17 @@ NSString  *SEGUE_EMAIL_FEATURE =@"NotPurchased",*SEGU_SUBSCRIPTION_SCREEN=@"acti
     [self performSegueWithIdentifier:SEGUE_LOGOUT sender:self];
 }
 
--(void) fbDidLogout
-{
-    NSLog(@"Logged out of facebook");
-    NSHTTPCookie *cookie;
-    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    for (cookie in [storage cookies])
-    {
-         NSLog(@"%@", cookie);
-        [storage deleteCookie:cookie];
-    }
-}
+//-(void) fbDidLogout
+//{
+//    NSLog(@"Logged out of facebook");
+//    NSHTTPCookie *cookie;
+//    NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+//    for (cookie in [storage cookies])
+//    {
+//         NSLog(@"%@", cookie);
+//        [storage deleteCookie:cookie];
+//    }
+//}
 
 #pragma mark- End of lifecycle
 

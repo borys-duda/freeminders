@@ -14,6 +14,8 @@
 #import "NewLocationTVC.h"
 #import "LocationCell.h"
 #import "MBProgressHUD.h"
+#import "UserManager.h"
+#import "DataManager.h"
 
 @interface UserLocationTVC ()
 
@@ -84,7 +86,7 @@ NSString *ADD_EDIT_USER_LOCATION = @"addeditlocation";
     else
     {
         self.isEditing = NO;
-        [PFObject saveAllInBackground:[UserData instance].userLocations block:^(BOOL succeeded, NSError *error) {
+        [[DataManager sharedInstance] saveDatas:[UserData instance].userLocations withBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 NSLog(@"User Locations saved");
             }
@@ -97,13 +99,9 @@ NSString *ADD_EDIT_USER_LOCATION = @"addeditlocation";
 - (void)performLoadDefaultAdrress
 {
 //    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    NSLog(@"userid : %@",[PFUser currentUser].objectId);
-    PFQuery *query = [PFQuery queryWithClassName:[UserLocation parseClassName]];
-    [query orderByDescending:@"createdAt"];
-    [query whereKey:@"user" equalTo:[PFUser currentUser]];
-    [query setLimit:1000];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-//        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+//    NSLog(@"userid : %@",[PFUser currentUser].objectId);
+    
+    [[DataManager sharedInstance] loadDefaultAddress:^(NSArray *objects, NSError *error) {
         if(!error)
         {
             if ([objects.firstObject isKindOfClass:[UserLocation  class]] || objects.count == 0)
@@ -115,7 +113,6 @@ NSString *ADD_EDIT_USER_LOCATION = @"addeditlocation";
             }
             [self.tableView reloadData];
         }
-        
     }];
 }
 
@@ -195,7 +192,7 @@ NSString *ADD_EDIT_USER_LOCATION = @"addeditlocation";
 
 - (void)performSaveLocations
 {
-    [PFObject saveAllInBackground:[UserData instance].userLocations block:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveDatas:[UserData instance].userLocations withBlock:^(BOOL succeeded, NSError *error) {
         if (!error) {
             NSLog(@"User Locations saved");
         }
@@ -209,7 +206,8 @@ NSString *ADD_EDIT_USER_LOCATION = @"addeditlocation";
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         
         UserLocation *location = [[UserData instance].userLocations objectAtIndex:self.userLocationToEdit];
-        [location deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        [[DataManager sharedInstance] deleteObject:location withBlock:^(BOOL succeeded, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             
             if (succeeded) {

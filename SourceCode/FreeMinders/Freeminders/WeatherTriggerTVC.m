@@ -14,7 +14,7 @@
 #import "SPGooglePlacesAutocompletePlace.h"
 #import "AddressCell.h"
 #import "UserLocation.h"
-#import "UserLocation.h"
+#import "DataManager.h"
 
 #define DEFAULT_MAP_SPAN 0.10
 
@@ -177,8 +177,7 @@ bool forZeroinMInts;
         }
         // Address
         ((WeatherTrigger *)[[UserData instance].task.weatherTriggers objectAtIndex:0]).address = [UserData instance].userInfo.defaultLocationAddress;
-        
-        [((WeatherTrigger *)[[UserData instance].task.weatherTriggers objectAtIndex:0]) saveInBackground];
+        [[DataManager sharedInstance] saveObject:[[UserData instance].task.weatherTriggers objectAtIndex:0]];
     }
     UserLocation *usrLocation = ((WeatherTrigger *)[[UserData instance].task.weatherTriggers objectAtIndex:0]).userLocation;
     if (usrLocation && ![usrLocation isEqual:[NSNull null]]) {
@@ -1241,7 +1240,7 @@ bool forZeroinMInts;
              NSLog(@"Geocode failed with error %@", error);
          }
          
-         [[UserData instance].task saveInBackground];
+         [[DataManager sharedInstance] saveObject:[UserData instance].task];
      }];
 }
 

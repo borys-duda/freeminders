@@ -13,6 +13,7 @@
 #import "Utils.h"
 #import "Reminder.h"
 #import "LocalNotificationManager.h"
+#import "DataManager.h"
 
 @interface ViewTaskTVC ()
 
@@ -667,10 +668,12 @@ bool isEnable;
     [UserData instance].task.snoozedUntilDate = snoozeDatePicker.date;
     [snoozeTextField resignFirstResponder];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [[UserData instance].task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }];
+    
+    
 }
 
 //snoze button action
@@ -739,9 +742,10 @@ bool isEnable;
     if (!showPicker) {
         //    [[UserData instance].task saveInBackground];
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [[UserData instance].task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
             [MBProgressHUD hideHUDForView:self.view animated:YES];
             [self.navigationController popViewControllerAnimated:YES];
+
         }];
     }
     self.snoozeView.hidden = YES;
@@ -782,9 +786,7 @@ bool isEnable;
         task.lastNotificationDate = [NSDate date];
     }
     
-    
-    
-    [task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }];
@@ -834,9 +836,9 @@ bool isEnable;
     task.isActive = YES;
     [task setAllStepsChecked:NO];
     task.lastNotificationDate = [NSDate date];
-    [task save];
+//    [task save];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }];
@@ -844,7 +846,7 @@ bool isEnable;
 - (void)performDeleteTask:(Reminder* )task
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [task deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] deleteObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }];
@@ -860,7 +862,7 @@ bool isEnable;
         
     }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }];

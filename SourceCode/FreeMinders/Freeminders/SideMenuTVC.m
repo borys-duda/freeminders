@@ -10,7 +10,9 @@
 #import "Utils.h"
 #import "Const.h"
 #import "UserData.h"
-#import <Parse/Parse.h>
+#import "UserManager.h"
+//#import <Parse/Parse.h>
+//#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "FrostedViewController.h"
 
 #define GROUPS_INDEXPATH [NSIndexPath indexPathForRow:2 inSection:0]
@@ -21,6 +23,8 @@
 @property (weak,nonatomic) IBOutlet UILabel *username;
 @property (weak,nonatomic) IBOutlet UIImageView *profilePictureView;
 
+@property (nonatomic) BOOL isLoggedInViaFacebook;
+
 @end
 
 @implementation SideMenuTVC
@@ -30,7 +34,8 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     self.username.text = [UserData instance].userSettings.userName;
-    if ([PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]){
+    self.isLoggedInViaFacebook = [[UserManager sharedInstance] isLinkedWithUser];
+    if (self.isLoggedInViaFacebook){
         [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *FBuser,NSError *error) {
             if (error) {
                 // Handle error
@@ -54,7 +59,7 @@
         }];
     }
     else{
-        self.username.text= [UserData instance].userSettings.userName.length?[UserData instance].userSettings.userName:[PFUser currentUser].username;
+        self.username.text= [UserData instance].userSettings.userName.length?[UserData instance].userSettings.userName:[[UserManager sharedInstance] getCurrentUser].username;
         self.profilePictureView.hidden = YES;
     }
     
@@ -64,8 +69,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    if (![PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]){
-        self.username.text= [UserData instance].userSettings.userName.length?[UserData instance].userSettings.userName:[PFUser currentUser].username;
+    if (!self.isLoggedInViaFacebook){
+        self.username.text= [UserData instance].userSettings.userName.length?[UserData instance].userSettings.userName:[[UserManager sharedInstance] getCurrentUser].username;
         self.profilePictureView.hidden = YES;
     }
 

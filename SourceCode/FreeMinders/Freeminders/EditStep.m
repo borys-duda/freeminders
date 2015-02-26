@@ -9,6 +9,7 @@
 #import "EditStep.h"
 #import "UserData.h"
 #import "Utils.h"
+#import "DataManager.h"
 
 @interface EditStep ()
 
@@ -105,14 +106,15 @@
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [[UserData instance].task.reminderSteps removeObject:stepToDelete];
-    [[UserData instance].task saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+    
+    [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideAllHUDsForView: self.view animated:YES];
         if(succeeded)
         {
             [[UserData instance].step deleteInBackground];
             [UserData instance].step = nil;
             [self.navigationController popViewControllerAnimated:YES];
-
+            
         }
     }];
 }

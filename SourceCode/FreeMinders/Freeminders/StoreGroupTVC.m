@@ -130,7 +130,8 @@ NSInteger SECTION_SAMPLE_MINDERS = 2;
         newPurchase.amountPaid = [NSNumber numberWithInt:0];
     }
     
-    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+//    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];

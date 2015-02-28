@@ -305,7 +305,8 @@ bool isActiveSubscriptionEnabled;
                 // Subscription expired
                 previousPuchase.expireDate = [previousPuchase.expireDate dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
             }
-            [[DataManager sharedInstance] saveToLocalWithObject:previousPuchase];
+//            [[DataManager sharedInstance] saveToLocalWithObject:previousPuchase];
+            [[DataManager sharedInstance] saveObject:previousPuchase];
             [UserData instance].userSubscription = previousPuchase;
             NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
             for (int i=0; i < prevPurchases.count; i++) {
@@ -325,7 +326,9 @@ bool isActiveSubscriptionEnabled;
             newPurchase.itemType = [NSNumber numberWithInt:typeSubscription];
             newPurchase.lastTransactionDate = [purchase objectForKey:@"lastTransactionDate"];
             newPurchase.expireDate = [[purchase objectForKey:@"lastTransactionDate"] dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
-            [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+//            [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] saveObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+            
                 NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
                 [prevPurchases addObject:newPurchase];
                 [UserData instance].userPurchases = [prevPurchases mutableCopy];

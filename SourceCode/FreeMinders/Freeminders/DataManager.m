@@ -10,39 +10,108 @@
 #import "UserData.h"
 #import "UserContact.h"
 #import "UserManager.h"
+#import "Reachability.h"
 
 @implementation DataManager
 
 static DataManager *gInstance = nil;
+static BOOL isConnected = false;
 
 +(DataManager *) sharedInstance {
     @synchronized(self) {
         if (gInstance == nil) {
             gInstance = [[self alloc] init];
+            Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+            [internetReachability startNotifier];
+            NetworkStatus netStatus = [internetReachability currentReachabilityStatus];
+            switch (netStatus)
+            {
+            case NotReachable:
+                isConnected = false;
+                break;
+            case ReachableViaWWAN:
+                isConnected = true;
+                break;
+            case ReachableViaWiFi:
+                isConnected = true;
+                break;
+            }
         }
     }
     
     return gInstance;
 }
 
+- (void) reachabilityChanged:(NSNotification *) note
+{
+    Reachability *curReach = [note object];
+    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
+    NetworkStatus netStatus = [curReach currentReachabilityStatus];
+    switch (netStatus)
+    {
+        case NotReachable:
+            isConnected = false;
+            break;
+        case ReachableViaWWAN:
+            isConnected = true;
+            break;
+        case ReachableViaWiFi:
+            isConnected = true;
+            break;
+    }
+}
+
 - (void) saveDatas:(NSArray *)array withBlock:(PFBooleanResultBlock)block
 {
-    [PFObject saveAllInBackground:array block:block];
+    [PFObject pinAllInBackground:array];
+    if (isConnected) {
+        [PFObject saveAllInBackground:array block:block];
+    } else {
+        for (int i = 0; i < array.count; i++) {
+            PFObject *object = [array objectAtIndex:i];
+            if (i == array.count - 1) {
+                [object saveEventually:block];
+            } else {
+                [object saveEventually];
+            }
+        }
+
+    }
 }
 
 - (void) saveDatas:(NSArray *)array
 {
-    [PFObject saveAllInBackground:array];
+    [PFObject pinAllInBackground:array];
+    if (isConnected) {
+        [PFObject saveAllInBackground:array];
+    } else {
+        for (int i = 0; i < array.count; i++) {
+            PFObject *object = [array objectAtIndex:i];
+            [object saveEventually];
+        }
+    }
 }
 
 - (void) saveObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block
 {
-    [object saveInBackgroundWithBlock:block];
+    [object pin];
+    if (isConnected) {
+        [object saveInBackgroundWithBlock:block];
+    } else {
+        [object saveEventually:block];
+    }
 }
 
 - (void) saveObject:(PFObject <PFSubclassing> *)object
 {
-    [object saveInBackground];
+    [object pin];
+    if (isConnected) {
+        [object saveInBackground];
+    } else {
+        [object saveEventually];
+    }
+
 }
 
 - (void) saveToLocalWithObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block
@@ -58,6 +127,9 @@ static DataManager *gInstance = nil;
 - (void) loadSubscriptionWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
     [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeDonation]];
     [query setLimit:1000];
@@ -68,14 +140,23 @@ static DataManager *gInstance = nil;
 - (void) loadUserContactsWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[UserContact parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[[UserManager sharedInstance] getCurrentUser]];
     [query setLimit:1000];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query findObjectsInBackgroundWithBlock:block];
 }
 
 - (void) loadTaskSetsWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[ReminderGroup parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[[UserManager sharedInstance] getCurrentUser]];
     query.cachePolicy = kPFCachePolicyNetworkElseCache;
     [query setLimit:1000];
@@ -88,6 +169,9 @@ static DataManager *gInstance = nil;
 - (void) loadUserSettingsWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[UserSetting parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[[UserManager sharedInstance] getCurrentUser]];
     [query setLimit:1000];
     [query findObjectsInBackgroundWithBlock:block];
@@ -96,6 +180,9 @@ static DataManager *gInstance = nil;
 - (void) loadDefaultAddress:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[UserLocation parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query orderByDescending:@"createdAt"];
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query setLimit:1000];
@@ -105,6 +192,9 @@ static DataManager *gInstance = nil;
 - (void) loadDetailedTasksWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     if (![UserData instance].isHavingActiveSubscription) {
         [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
@@ -124,6 +214,9 @@ static DataManager *gInstance = nil;
 - (void) loadStoreGroupsWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[StoreItem parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"isEnabled" equalTo:[NSNumber numberWithBool:YES]];
     [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeIndividual]];
     [query includeKey:@"reminderGroups"];
@@ -141,6 +234,9 @@ static DataManager *gInstance = nil;
 - (void) loadStoreTasksWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"isStoreTask" equalTo:[NSNumber numberWithBool:YES]];
     [query includeKey:@"weatherTriggers"];
     [query includeKey:@"locationTriggers"];
@@ -153,6 +249,9 @@ static DataManager *gInstance = nil;
 - (void) loadTasksWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query setLimit:1000];
     [query findObjectsInBackgroundWithBlock:block];
@@ -161,6 +260,9 @@ static DataManager *gInstance = nil;
 - (void) loadUserPurchasedWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     [query whereKey:@"itemType" equalTo:[NSNumber numberWithInt:typeSubscription]];
     [query setLimit:1000];
@@ -170,6 +272,9 @@ static DataManager *gInstance = nil;
 - (void) checkUserPurchasedWithProductId:(NSString*)productId withObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock) block;
 {
     PFQuery *query = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"storeItemId" equalTo:productId];
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     if ([query countObjects] == 0) {

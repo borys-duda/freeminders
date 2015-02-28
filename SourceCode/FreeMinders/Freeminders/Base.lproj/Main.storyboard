@@ -4051,10 +4051,10 @@ I can sincerely state that any donations you send our way would be greatly appre
                                     <constraint firstAttribute="centerX" secondItem="w0k-MO-RoM" secondAttribute="centerX" id="lNS-7X-s9T"/>
                                 </constraints>
                             </view>
-                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lFd-5k-khX" userLabel="View-DateRange">
+                            <view hidden="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lFd-5k-khX" userLabel="View-DateRange">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="366"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NeF-pu-0Eo">
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NeF-pu-0Eo">
                                         <rect key="frame" x="0.0" y="209" width="320" height="157"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Start date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NxJ-C3-Dws">

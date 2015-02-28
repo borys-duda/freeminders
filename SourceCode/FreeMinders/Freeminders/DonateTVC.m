@@ -153,7 +153,12 @@
     newPurchase.lastTransactionDate = [purchase objectForKey:@"lastTransactionDate"];
     //    newPurchase.expireDate = [[purchase objectForKey:@"lastTransactionDate"] dateByAddingTimeInterval:SECONDS_PER_DAY*[[UserData instance].storeGroup.validity intValue]];
     
-    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+//    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+//        NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
+//        [prevPurchases addObject:newPurchase];
+//        [UserData instance].userPurchases = [prevPurchases mutableCopy];
+//    }];
+    [[DataManager sharedInstance] saveObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];

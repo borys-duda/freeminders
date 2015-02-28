@@ -14,6 +14,8 @@
 
 +(DataManager *) sharedInstance;
 
+- (void) reachabilityChanged:(NSNotification *) note;
+
 - (void) saveDatas:(NSArray *)array withBlock:(PFBooleanResultBlock)block;
 - (void) saveDatas:(NSArray *)array;
 - (void) saveObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block;

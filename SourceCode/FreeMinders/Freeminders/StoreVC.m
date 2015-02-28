@@ -168,7 +168,8 @@ bool isPurchased;
         newPurchase.expireDate = [UserData instance].userSubscription.expireDate;
         newPurchase.amountPaid = [NSNumber numberWithInt:0];
     }
-    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+//    [[DataManager sharedInstance] saveToLocalWithObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveObject:newPurchase withBlock:^(BOOL succeeded, NSError *error) {
         NSMutableArray *prevPurchases = [[UserData instance].userPurchases mutableCopy];
         [prevPurchases addObject:newPurchase];
         [UserData instance].userPurchases = [prevPurchases mutableCopy];

@@ -18,6 +18,7 @@
 - (void) signUpUser:(NSString *)username withPassword:(NSString *)password withBlock:(PFBooleanResultBlock)block;
 - (void) loginFacebookUserWithBlock:(PFUserResultBlock) block;
 - (void) loginUser:(NSString *)username withPassword:(NSString *)password withBlock:(PFUserResultBlock)block;
+- (void) saveLoginUserToLocal:(PFUser *)user;
 - (void) setUserEmailAddress:(NSString *)email andUsername:(NSString *)username withBlock:(PFBooleanResultBlock)block;
 - (void) requestResetPasswordWithEmail:(NSString *)email;
 - (void) resendVerificationEmail:(NSString *)email withBlock:(PFBooleanResultBlock)block;

@@ -1472,7 +1472,10 @@ bool isFirstTime;
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [self.refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
         NSLog(@"TASKS LOADED IN Tasklist");
-        if ([objects.firstObject isKindOfClass:[Reminder class]] || objects.count == 0) {
+        PFObject *firstObject = (PFObject *)objects.firstObject;
+//        if ([objects.firstObject isKindOfClass:[Reminder class]] || objects.count == 0) {
+        if ([[firstObject parseClassName] isEqualToString:[Reminder parseClassName]] || objects.count == 0) {
+            
             for (Reminder *task in objects) {
                 NSMutableArray *mutableTaskIds = [[[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY] mutableCopy];
                 if ([mutableTaskIds containsObject:task.objectId]) {
@@ -1481,7 +1484,6 @@ bool isFirstTime;
                     [mutableTaskIds removeObject:task.objectId];
                     [[NSUserDefaults standardUserDefaults] setObject:[mutableTaskIds copy] forKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY];
                 }
-                
                 if (task.snoozedUntilDate && ! [Utils isDateInFuture:task.snoozedUntilDate]) {
                     task.snoozedUntilDate = nil;
                     [[DataManager sharedInstance] saveObject:task];
@@ -1492,6 +1494,7 @@ bool isFirstTime;
                     [[DataManager sharedInstance] saveObject:task];
                 }
             }
+            
             [UserData instance].tasks = objects;
             
             // Determine if background updates are needed
@@ -1516,6 +1519,8 @@ bool isFirstTime;
             
             [LocalNotificationManager setNotificationsForAllTasks];
             [self setupActiveDormantArrays];
+            
+            
             
         } else {
             NSLog(@"ERROR LOADING TASKS");

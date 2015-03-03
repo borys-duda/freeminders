@@ -321,13 +321,13 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
 
 -(void)performDeleteAllTasksWithTaskSetId:(ReminderGroup *)taskSet
 {
-    [[DataManager sharedInstance] deleteAllTasksWithTaskSetId:taskSet withBlock:^(NSArray *objects, NSError *error) {
+    [[DataManager sharedInstance] findAllTasksWithTaskSetId:taskSet withBlock:^(NSArray *objects, NSError *error) {
         NSLog(@"TASKS LOADED");
         if (! error) {
             /*  for (Reminder *task in objects) {
              [task deleteEventually];
              }*/
-            [PFObject deleteAllInBackground:objects block:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] deleteAllObjects:objects withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 NSMutableArray *mutableFilterGroups = [[UserData instance].filterGroups mutableCopy];
                 if ([[UserData instance].filterGroups containsObject:taskSet.objectId]) {

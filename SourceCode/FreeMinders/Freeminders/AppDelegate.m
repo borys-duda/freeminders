@@ -83,6 +83,7 @@
     // SETUP PARSE
 //    [Parse setApplicationId:@"1u1Bm64sm45gIS5dpQ6sX5dbkvqEok5MlgQF8ra5"
 //                  clientKey:@"WedFBQIHIrzs0gppoV7aeQWU62Rs80pcQ2FfUEmM"];
+    [Parse enableLocalDatastore];
     [Parse setApplicationId:@"tFABB2RCAMsZW2PPzXhhk35199GfhAzkwHFKAb4z"
                   clientKey:@"gWhTYD2Ivhzp56OCv4ocOdjLHRfbAC1eirCdQdJJ"];
     [PFFacebookUtils initializeFacebook];

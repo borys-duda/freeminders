@@ -11,6 +11,7 @@
 #import "Const.h"
 #import "UserData.h"
 #import "UserManager.h"
+#import "DataManager.h"
 //#import <Parse/Parse.h>
 //#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "FrostedViewController.h"
@@ -35,14 +36,14 @@
 	// Do any additional setup after loading the view.
     self.username.text = [UserData instance].userSettings.userName;
     self.isLoggedInViaFacebook = [[UserManager sharedInstance] isLinkedWithUser];
-    if (self.isLoggedInViaFacebook){
+    if (self.isLoggedInViaFacebook && [[DataManager sharedInstance] checkConnectionStatus] ){
         [[FBRequest requestForMe] startWithCompletionHandler:^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *FBuser,NSError *error) {
             if (error) {
                 // Handle error
             }
             else {
                 NSString *userName = [FBuser name];
-                NSURL *userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square", [FBuser id]]];
+                NSURL *userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square", [FBuser objectID]]];
                 
                 dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
                     //Background Thread

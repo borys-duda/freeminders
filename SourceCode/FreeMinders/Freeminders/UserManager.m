@@ -43,6 +43,11 @@ static UserManager *gInstance = nil;
     [PFUser logInWithUsernameInBackground:username password:password block:block];
 }
 
+- (void) saveLoginUserToLocal:(PFUser *)user
+{
+    NSLog(@"%@, %@", user.username, user.password);
+}
+
 - (void) setUserEmailAddress:(NSString *)email andUsername:(NSString *)username withBlock:(PFBooleanResultBlock)block
 {
     [[self getCurrentUser] setEmail:email];

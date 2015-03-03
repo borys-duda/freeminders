@@ -1250,7 +1250,7 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
     self.task.user = [PFUser currentUser];
     self.task.note = ![self.taskNotesTextView.text isEqualToString:@"Enter Notes"]?self.taskNotesTextView.text:@"";
     if (self.task.triggerType == noTrigger)
-           self.task.lastNotificationDate = [NSDate date];
+        self.task.lastNotificationDate = [NSDate date];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [[DataManager sharedInstance] saveObject:self.task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];

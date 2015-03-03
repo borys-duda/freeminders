@@ -22,20 +22,12 @@ static BOOL isConnected = false;
         if (gInstance == nil) {
             gInstance = [[self alloc] init];
             Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
             [internetReachability startNotifier];
             NetworkStatus netStatus = [internetReachability currentReachabilityStatus];
-            switch (netStatus)
-            {
-            case NotReachable:
+            if (netStatus == NotReachable) {
                 isConnected = false;
-                break;
-            case ReachableViaWWAN:
+            } else {
                 isConnected = true;
-                break;
-            case ReachableViaWiFi:
-                isConnected = true;
-                break;
             }
         }
     }
@@ -43,23 +35,18 @@ static BOOL isConnected = false;
     return gInstance;
 }
 
-- (void) reachabilityChanged:(NSNotification *) note
+- (BOOL) checkConnectionStatus
 {
-    Reachability *curReach = [note object];
-    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-    NetworkStatus netStatus = [curReach currentReachabilityStatus];
-    switch (netStatus)
-    {
-        case NotReachable:
-            isConnected = false;
-            break;
-        case ReachableViaWWAN:
-            isConnected = true;
-            break;
-        case ReachableViaWiFi:
-            isConnected = true;
-            break;
+    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
+    [internetReachability startNotifier];
+    NetworkStatus netStatus = [internetReachability currentReachabilityStatus];
+    if (netStatus == NotReachable) {
+        isConnected = false;
+    } else {
+        isConnected = true;
     }
+    
+    return isConnected;
 }
 
 - (void) saveDatas:(NSArray *)array withBlock:(PFBooleanResultBlock)block
@@ -70,11 +57,11 @@ static BOOL isConnected = false;
     } else {
         for (int i = 0; i < array.count; i++) {
             PFObject *object = [array objectAtIndex:i];
-            if (i == array.count - 1) {
-                [object saveEventually:block];
-            } else {
+//            if (i == array.count - 1) {
+//                [object saveEventually:block];
+//            } else {
                 [object saveEventually];
-            }
+//            }
         }
 
     }
@@ -95,11 +82,13 @@ static BOOL isConnected = false;
 
 - (void) saveObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block
 {
-    [object pin];
+    
     if (isConnected) {
+        [object pin];
         [object saveInBackgroundWithBlock:block];
     } else {
-        [object saveEventually:block];
+        [object saveEventually];
+        [object pinInBackgroundWithBlock:block];
     }
 }
 
@@ -158,7 +147,7 @@ static BOOL isConnected = false;
         [query fromLocalDatastore];
     }
     [query whereKey:@"user" equalTo:[[UserManager sharedInstance] getCurrentUser]];
-    query.cachePolicy = kPFCachePolicyNetworkElseCache;
+//    query.cachePolicy = kPFCachePolicyNetworkElseCache;
     [query setLimit:1000];
     if (![UserData instance].isHavingActiveSubscription) {
         [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
@@ -192,6 +181,7 @@ static BOOL isConnected = false;
 - (void) loadDetailedTasksWithBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
+    [self checkConnectionStatus];
     if (!isConnected) {
         [query fromLocalDatastore];
     }
@@ -199,7 +189,7 @@ static BOOL isConnected = false;
     if (![UserData instance].isHavingActiveSubscription) {
         [query whereKey:@"isSubscribed" notEqualTo:[NSNumber numberWithBool:YES]];
     }
-    query.cachePolicy = kPFCachePolicyNetworkElseCache;
+//    query.cachePolicy = kPFCachePolicyNetworkElseCache;
     [query orderBySortDescriptors:[NSArray arrayWithObjects:[NSSortDescriptor sortDescriptorWithKey:@"lastNotificationDate" ascending:YES], [NSSortDescriptor sortDescriptorWithKey:@"updatedAt" ascending:NO], nil]];
     [query includeKey:@"weatherTriggers.userLocation"];
     [query includeKey:@"locationTriggers.userLocation"];
@@ -278,8 +268,14 @@ static BOOL isConnected = false;
     [query whereKey:@"storeItemId" equalTo:productId];
     [query whereKey:@"user" equalTo:[PFUser currentUser]];
     if ([query countObjects] == 0) {
-        
-        [object saveInBackgroundWithBlock:block];
+        if (isConnected) {
+            [object pinInBackground];
+            [object saveInBackgroundWithBlock:block];
+        }
+        else {
+            [object pinInBackgroundWithBlock:block];
+            [object saveEventually];
+        }
     }
 }
 
@@ -291,19 +287,44 @@ static BOOL isConnected = false;
 
 - (void) deleteObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block
 {
-    [object deleteInBackgroundWithBlock:block];
+    [object unpinInBackground];
+    if (!isConnected) {
+        [object unpinInBackgroundWithBlock:block];
+        [object deleteEventually];
+    }else {
+        [object unpinInBackground];
+        [object deleteInBackgroundWithBlock:block];
+    }
 }
 
 - (void) deleteObject:(PFObject <PFSubclassing> *)object{
+    [object unpinInBackground];
     [object deleteInBackground];
 }
 
-- (void) deleteAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block
+- (void) findAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block
 {
     PFQuery *query = [PFQuery queryWithClassName:[Reminder parseClassName]];
+    if (!isConnected) {
+        [query fromLocalDatastore];
+    }
     [query whereKey:@"reminderGroup" equalTo:object];
     [query setLimit:1000];
     [query findObjectsInBackgroundWithBlock:block];
+}
+
+- (void) deleteAllObjects:(NSArray*)objects withBlock:(PFBooleanResultBlock) block
+{
+    if (!isConnected) {
+        [PFObject unpinAllInBackground:objects block:block];
+        for (int i = 0; i < objects.count; i++) {
+            PFObject *object = (PFObject *)[objects objectAtIndex:i];
+            [object deleteEventually];
+        }
+    } else {
+        [PFObject unpinAllInBackground:objects];
+        [PFObject deleteAllInBackground:objects block:block];
+    }
 }
 
 @end

@@ -1923,6 +1923,7 @@
 				ORGANIZATIONNAME = Freeminders;
 				TargetAttributes = {
 					2448103418EF073B005D9250 = {
+						DevelopmentTeam = CLG6923HN9;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;

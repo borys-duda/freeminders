@@ -239,6 +239,7 @@ NSString *emailRegex ;
                 }else{
                     [self performSegueWithIdentifier:SEGUE_SUCCESSFUL_LOGIN sender:self];
                 }
+                [[UserManager sharedInstance] saveLoginUserToLocal:user];
             }else if (user && (!isVerified)) {
                 UIAlertView *verifyAlert = [[UIAlertView alloc] initWithTitle:@"Login Failed" message:@"Your email is not verified. Please check your inbox and click on link provided." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:@"Resend", nil];
                 self.alertType = resendVerificationMail;

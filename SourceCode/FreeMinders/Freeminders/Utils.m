@@ -23,6 +23,7 @@
 #import "UserSetting.h"
 #import "UserPurchase.h"
 #import "StoreHelper.h"
+#import "DataManager.h"
 
 #import "Interpreter.h"
 #import "InterpreterAdapter.h"
@@ -319,7 +320,12 @@
 + (void)loadUserInfoForLogin
 {   
     PFQuery *purchaseQuery = [PFQuery queryWithClassName:[UserPurchase parseClassName]];
+    
     [purchaseQuery whereKey:@"user" equalTo:[PFUser currentUser]];
+    if (![[DataManager sharedInstance] checkConnectionStatus]) {
+        [purchaseQuery fromLocalDatastore];
+    }
+    
     [purchaseQuery setLimit:1000];
     [purchaseQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
         [UserData instance].userPurchases = objects;

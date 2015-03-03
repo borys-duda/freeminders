@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "+[Reachability reachabilityForInternetConnection]:Reachability.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[AddEditTaskTVC performSaveTask]:AddEditTaskTVC.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[PFUser currentUser]">
+            </PersistentString>
+            <PersistentString
+               value = "self.task">
+            </PersistentString>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[UserManager getCurrentUser]:UserManager.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[PFUser currentUser]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[TaskListVC setupActiveDormantArrays]:TaskListVC.m">
+      </ContextState>
+      <ContextState
+         contextName = "__30-[TaskListVC performLoadTasks]_block_invoke:TaskListVC.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "firstObject.a">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

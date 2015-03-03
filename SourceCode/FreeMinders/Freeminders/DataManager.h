@@ -14,7 +14,7 @@
 
 +(DataManager *) sharedInstance;
 
-- (void) reachabilityChanged:(NSNotification *) note;
+- (BOOL) checkConnectionStatus;
 
 - (void) saveDatas:(NSArray *)array withBlock:(PFBooleanResultBlock)block;
 - (void) saveDatas:(NSArray *)array;
@@ -38,7 +38,8 @@
 
 - (void) deleteObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block;
 - (void) deleteObject:(PFObject <PFSubclassing> *)object;
-- (void) deleteAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block;
+- (void) findAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block;
+- (void) deleteAllObjects:(NSArray*)objects withBlock:(PFBooleanResultBlock) block;
 
 
 

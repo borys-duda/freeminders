@@ -80,7 +80,7 @@ double MAP_SPAN = 0.10;
         }
         // Address
         ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).address = [UserData instance].userInfo.defaultLocationAddress;
-        [[DataManager sharedInstance] saveObject:[UserData instance].task];
+        [[DataManager sharedInstance] saveReminder:[UserData instance].task];
     }
     UserLocation *usrLocation = ((LocationTrigger *)[[UserData instance].task.locationTriggers objectAtIndex:0]).userLocation;
     if (usrLocation && ![usrLocation isEqual:[NSNull null]]) {

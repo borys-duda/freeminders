@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "UserData.h"
 #import <Parse/Parse.h>
 
 
@@ -23,6 +24,13 @@
 - (void) saveToLocalWithObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block;
 - (void) saveToLocalWithObject:(PFObject <PFSubclassing> *)object;
 
+- (void) saveReminders:(NSArray *)array withBlock:(PFBooleanResultBlock)block;
+- (void) saveReminders:(NSArray *)array;
+- (void) saveReminder:(Reminder *)reminder withBlock:(PFBooleanResultBlock)block;
+- (void) saveReminder:(Reminder *)reminder;
+
+- (void) saveReminderGroup:(ReminderGroup *)group withBlock:(PFBooleanResultBlock)block;
+
 - (void) loadSubscriptionWithBlock:(PFArrayResultBlock) block;
 - (void) loadUserContactsWithBlock:(PFArrayResultBlock) block;
 - (void) loadTaskSetsWithBlock:(PFArrayResultBlock) block;
@@ -38,8 +46,15 @@
 
 - (void) deleteObject:(PFObject <PFSubclassing> *)object withBlock:(PFBooleanResultBlock)block;
 - (void) deleteObject:(PFObject <PFSubclassing> *)object;
-- (void) findAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block;
 - (void) deleteAllObjects:(NSArray*)objects withBlock:(PFBooleanResultBlock) block;
+
+- (void) deleteReminder:(Reminder *)reminder withBlock:(PFBooleanResultBlock)block;
+- (void) deleteReminders:(NSArray *)reminders withBlock:(PFBooleanResultBlock)block;
+
+- (void) deleteReminderGroup:(ReminderGroup *)group withBlock:(PFBooleanResultBlock)block;
+
+
+- (void) findAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block;
 
 
 

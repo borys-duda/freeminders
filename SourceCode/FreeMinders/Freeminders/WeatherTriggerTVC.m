@@ -1240,7 +1240,7 @@ bool forZeroinMInts;
              NSLog(@"Geocode failed with error %@", error);
          }
          
-         [[DataManager sharedInstance] saveObject:[UserData instance].task];
+         [[DataManager sharedInstance] saveReminder:[UserData instance].task];
      }];
 }
 

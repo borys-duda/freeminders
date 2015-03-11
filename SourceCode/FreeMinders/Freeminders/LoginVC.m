@@ -11,7 +11,6 @@
 //#import <Parse/Parse.h>
 //#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "Const.h"
-#import "DataManager.h"
 #import "UserManager.h"
 
 #define SEGUE_SIGNUP @"signup"

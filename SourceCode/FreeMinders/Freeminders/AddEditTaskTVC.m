@@ -1252,7 +1252,7 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
     if (self.task.triggerType == noTrigger)
         self.task.lastNotificationDate = [NSDate date];
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [[DataManager sharedInstance] saveObject:self.task withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveReminder:self.task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (succeeded) {
             [UserData instance].task = self.task;
@@ -1281,7 +1281,7 @@ targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath
 //    NSLog(@"%@",[UserData instance].taskSets);
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [[DataManager sharedInstance] saveObject:newTaskSet withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveReminderGroup:newTaskSet withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         self.task.reminderGroup = newTaskSet;
         [UserData instance].taskSets = [[UserData instance].taskSets arrayByAddingObject:newTaskSet];

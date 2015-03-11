@@ -7,7 +7,6 @@
 //
 
 #import "DataManager.h"
-#import "UserData.h"
 #import "UserContact.h"
 #import "UserManager.h"
 #import "Reachability.h"
@@ -112,6 +111,66 @@ static BOOL isConnected = false;
 {
     [object saveEventually];
 }
+
+// Edit
+- (void) saveReminders:(NSArray *)array withBlock:(PFBooleanResultBlock)block
+{
+    if (isConnected) {
+        [Reminder saveAllInBackground:array block:block];
+    } else {
+        for (int i = 0; i < array.count; i++) {
+            Reminder *object = [array objectAtIndex:i];
+            [object saveEventually];
+        }
+        
+    }
+}
+
+- (void) saveReminders:(NSArray *)array
+{
+    if (isConnected) {
+        [Reminder saveAllInBackground:array];
+    } else {
+        for (int i = 0; i < array.count; i++) {
+            Reminder *object = [array objectAtIndex:i];
+            [object saveEventually];
+        }
+        
+    }
+}
+
+- (void) saveReminder:(Reminder *)reminder withBlock:(PFBooleanResultBlock)block
+{
+    if (isConnected) {
+        [reminder pin];
+        [reminder saveInBackgroundWithBlock:block];
+    } else {
+        [reminder saveEventually];
+        [reminder pinInBackgroundWithBlock:block];
+    }
+}
+
+- (void) saveReminder:(Reminder *)reminder
+{
+    if (isConnected) {
+        [reminder saveInBackground];
+    } else {
+        [reminder saveEventually];
+    }
+}
+
+- (void) saveReminderGroup:(ReminderGroup *)group withBlock:(PFBooleanResultBlock)block
+{
+    if (isConnected) {
+        [group pin];
+        [group saveInBackgroundWithBlock:block];
+    } else {
+        [group saveEventually];
+        [group pinInBackgroundWithBlock:block];
+    }
+}
+
+
 
 - (void) loadSubscriptionWithBlock:(PFArrayResultBlock) block
 {
@@ -301,6 +360,35 @@ static BOOL isConnected = false;
     [object unpinInBackground];
     [object deleteInBackground];
 }
+
+- (void) deleteReminder:(Reminder *)reminder withBlock:(PFBooleanResultBlock)block
+{
+    [reminder unpinInBackground];
+    if (!isConnected) {
+        [reminder unpinInBackgroundWithBlock:block];
+        [reminder deleteEventually];
+    }else {
+        [reminder unpinInBackground];
+        [reminder deleteInBackgroundWithBlock:block];
+    }
+}
+
+- (void) deleteReminders:(NSArray *)reminders withBlock:(PFBooleanResultBlock)block
+{
+    if (!isConnected) {
+        [Reminder unpinAllInBackground:reminders block:block];
+        for (int i = 0; i < reminders.count; i++) {
+            Reminder *reminder = (Reminder *)[reminders objectAtIndex:i];
+            [reminder deleteEventually];
+        }
+    } else {
+        [PFObject unpinAllInBackground:reminders];
+        [PFObject deleteAllInBackground:reminders block:block];
+    }
+}
+
+
+
 
 - (void) findAllTasksWithTaskSetId:(PFObject <PFSubclassing>*)object withBlock:(PFArrayResultBlock) block
 {

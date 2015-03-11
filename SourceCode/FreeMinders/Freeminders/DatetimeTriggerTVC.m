@@ -99,7 +99,7 @@ NSInteger const ROW_EVERYMONTH_OPTION = 7;
         trigger.date = tomorrowAlertTime;
         
         [[UserData instance].task.dateTimeTriggers addObject:trigger];
-        [[DataManager sharedInstance] saveObject:[UserData instance].task];
+        [[DataManager sharedInstance] saveReminder:[UserData instance].task];
     }
     
     [self setupPickerViews];

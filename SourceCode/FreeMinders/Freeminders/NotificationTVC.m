@@ -151,7 +151,7 @@ int sectionsCount;
     if(tasksToReset.count)
     {
 //        [PFObject saveAllInBackground:tasksToReset];
-        [[DataManager sharedInstance] saveDatas:tasksToReset];
+        [[DataManager sharedInstance] saveReminders:tasksToReset];
     }
     
     [self.navigationController popViewControllerAnimated:YES];

@@ -244,7 +244,7 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
             taskSet.user = [[UserManager sharedInstance] getCurrentUser];
             
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            [[DataManager sharedInstance] saveObject:taskSet withBlock:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] saveReminderGroup:taskSet withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 if (succeeded) {
@@ -327,7 +327,7 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
             /*  for (Reminder *task in objects) {
              [task deleteEventually];
              }*/
-            [[DataManager sharedInstance] deleteAllObjects:objects withBlock:^(BOOL succeeded, NSError *error) {
+            [[DataManager sharedInstance] deleteReminders:objects withBlock:^(BOOL succeeded, NSError *error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 NSMutableArray *mutableFilterGroups = [[UserData instance].filterGroups mutableCopy];
                 if ([[UserData instance].filterGroups containsObject:taskSet.objectId]) {

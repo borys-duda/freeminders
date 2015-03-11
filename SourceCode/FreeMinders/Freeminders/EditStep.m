@@ -107,7 +107,7 @@
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [[UserData instance].task.reminderSteps removeObject:stepToDelete];
     
-    [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveReminder:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideAllHUDsForView: self.view animated:YES];
         if(succeeded)
         {

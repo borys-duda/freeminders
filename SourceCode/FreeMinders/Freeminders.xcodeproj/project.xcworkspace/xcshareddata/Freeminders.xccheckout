@@ -10,31 +10,31 @@
 	<string>Freeminders</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>5C0734B3CC6454341DFC313F28C5786A44300A3A</key>
-		<string>http://sandeep.areddy%2540mobigesture.com@183.82.4.68:7990/scm/anb1_0/freeminders.git</string>
+		<key>451F082422E21ABB194B701882C47FC7BDD113C9</key>
+		<string>https://github.com/borys-duda/freeminders.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Freeminders.xcodeproj</string>
+	<string>SourceCode/FreeMinders/Freeminders.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>5C0734B3CC6454341DFC313F28C5786A44300A3A</key>
-		<string>../..</string>
+		<key>451F082422E21ABB194B701882C47FC7BDD113C9</key>
+		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>http://sandeep.areddy%2540mobigesture.com@183.82.4.68:7990/scm/anb1_0/freeminders.git</string>
+	<string>https://github.com/borys-duda/freeminders.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>5C0734B3CC6454341DFC313F28C5786A44300A3A</string>
+	<string>451F082422E21ABB194B701882C47FC7BDD113C9</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>5C0734B3CC6454341DFC313F28C5786A44300A3A</string>
+			<string>451F082422E21ABB194B701882C47FC7BDD113C9</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Freeminders_Resource2</string>
+			<string>git</string>
 		</dict>
 	</array>
 </dict>

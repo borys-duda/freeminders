@@ -532,7 +532,7 @@ bool isFirstTime;
     [UserData instance].task.nextNotificationDate = [UserData instance].task.snoozedUntilDate;
     [UserData instance].task.notificationSent = NO;
     [self.snoozeTextField resignFirstResponder];
-    [[DataManager sharedInstance] saveObject:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveReminder:[UserData instance].task withBlock:^(BOOL succeeded, NSError *error) {
         if(succeeded)
         {
 //           [self performLoadTasks];
@@ -988,7 +988,7 @@ bool isFirstTime;
                     task.isActive = YES;
                 }
                 
-                [[DataManager sharedInstance] saveObject:task];
+                [[DataManager sharedInstance] saveReminder:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self.tableView reloadData];
             } else if (indexPath.section == SECTION_DORMANT) {
@@ -1002,7 +1002,7 @@ bool isFirstTime;
                 }
                 task.lastCompletionDate = nil;
                 
-                [[DataManager sharedInstance] saveObject:task];
+                [[DataManager sharedInstance] saveReminder:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self performLoadTasks];
             } else if (indexPath.section == SECTION_SCHEDULED){
@@ -1011,7 +1011,7 @@ bool isFirstTime;
                 [task setAllStepsChecked:NO];
                 task.lastNotificationDate = [NSDate date];
                 task.snoozedUntilDate = nil;
-                [[DataManager sharedInstance] saveObject:task];
+                [[DataManager sharedInstance] saveReminder:task];
                 [cell hideUtilityButtonsAnimated:NO];
                 [self performLoadTasks];
             }
@@ -1160,7 +1160,7 @@ bool isFirstTime;
   
     }
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [[DataManager sharedInstance] saveObject:task withBlock:^(BOOL succeeded, NSError *error) {
+    [[DataManager sharedInstance] saveReminder:task withBlock:^(BOOL succeeded, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [self performLoadTasks];
     }];
@@ -1285,7 +1285,7 @@ bool isFirstTime;
     }
     [UserData instance].task.nextNotificationDate = [UserData instance].task.snoozedUntilDate;
     [UserData instance].task.notificationSent = NO;
-    [[DataManager sharedInstance] saveObject:[UserData instance].task];
+    [[DataManager sharedInstance] saveReminder:[UserData instance].task];
     [self setupActiveDormantArrays];
     
     self.snoozeView.hidden = YES;
@@ -1480,18 +1480,18 @@ bool isFirstTime;
                 NSMutableArray *mutableTaskIds = [[[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY] mutableCopy];
                 if ([mutableTaskIds containsObject:task.objectId]) {
                     task.lastNotificationDate = [NSDate date];
-                    [[DataManager sharedInstance] saveObject:task];
+                    [[DataManager sharedInstance] saveReminder:task];
                     [mutableTaskIds removeObject:task.objectId];
                     [[NSUserDefaults standardUserDefaults] setObject:[mutableTaskIds copy] forKey:USER_DEFAULTS_TAPPED_TASK_ID_ARRAY];
                 }
                 if (task.snoozedUntilDate && ! [Utils isDateInFuture:task.snoozedUntilDate]) {
                     task.snoozedUntilDate = nil;
-                    [[DataManager sharedInstance] saveObject:task];
+                    [[DataManager sharedInstance] saveReminder:task];
                 } else if (task.nextNotificationDate && ! [Utils isDateInFuture:task.nextNotificationDate]) {
                     task.lastNotificationDate = task.nextNotificationDate;
                     task.nextNotificationDate = nil;
                     [task setAllStepsChecked:NO];
-                    [[DataManager sharedInstance] saveObject:task];
+                    [[DataManager sharedInstance] saveReminder:task];
                 }
             }
             
@@ -1681,7 +1681,7 @@ bool isFirstTime;
             }
         }
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [[DataManager sharedInstance] saveDatas:configuredTasks withBlock:^(BOOL succeeded, NSError *error) {
+        [[DataManager sharedInstance] saveReminders:configuredTasks withBlock:^(BOOL succeeded, NSError *error) {
             if (!error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             }else {

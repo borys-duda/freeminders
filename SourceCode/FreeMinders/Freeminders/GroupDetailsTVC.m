@@ -500,7 +500,7 @@ NSString  *SEGU_NOTIFICATION_SEREEN=@"notificationScreen",*SEGU_LOCATION_SEREEN=
         [UserData instance].reminderGroup.desc = self.discriptionOfGroupTextView.text;
         [UserData instance].reminderGroup.name = self.groupTitleTextView.text;
         
-        [[DataManager sharedInstance] saveObject:[UserData instance].reminderGroup withBlock:^(BOOL succeeded, NSError *error) {
+        [[DataManager sharedInstance] saveReminderGroup:[UserData instance].reminderGroup withBlock:^(BOOL succeeded, NSError *error) {
             if(succeeded)
             {
                 self.reminderGroupCancelValues = [[UserData instance].reminderGroup copy];

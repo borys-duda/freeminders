@@ -111,7 +111,7 @@
         [MBProgressHUD hideAllHUDsForView: self.view animated:YES];
         if(succeeded)
         {
-            [[UserData instance].step deleteInBackground];
+            [[DataManager sharedInstance] deleteObject:[UserData instance].step];
             [UserData instance].step = nil;
             [self.navigationController popViewControllerAnimated:YES];
             

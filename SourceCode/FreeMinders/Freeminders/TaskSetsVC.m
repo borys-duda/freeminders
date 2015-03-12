@@ -285,8 +285,8 @@ NSString *SEGUE_GROUP_DETAILS=@"GroupDetailsScreen";
 {
     if (self.alertType == deleteTaskSet && buttonIndex == 1) {
         [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        
-        [self.taskSetToDelete deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+
+        [[DataManager sharedInstance] deleteReminderGroup:self.taskSetToDelete withBlock:^(BOOL succeeded, NSError *error) {
 //            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             
             if (succeeded) {
